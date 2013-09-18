@@ -1,6 +1,5 @@
 import flickrapi
 import flickrapi.shorturl
-import xml.etree.ElementTree as ET
 import urllib
 from nltk.corpus import wordnet 
 
@@ -22,6 +21,7 @@ def test_flickr_download():
     url = 'http://farm'+img.get('farm')+'.staticflickr.com/'+img.get('server')+'/'+img.get('id')+'_'+img.get('secret')+'_n.jpg'
     urllib.urlretrieve(url, "/tmp/"+tag+"_"+id+".jpg")
 
+    
 def basic_level_categories():
   # nltk.download(), install wordnet in /Users/jebyrne/.nltk, 
   # set NLTK_DATA environment variable to /Users/jebyrne/.nltk

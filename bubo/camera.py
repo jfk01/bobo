@@ -9,6 +9,7 @@ import time
 import bubo.util
 import tempfile
 
+
 class Camera(object):
   CAM = None
   FRAMERATE = False
@@ -51,10 +52,3 @@ class Ipcam(Camera):
     imgrey = cv2.imread(self.TMPFILE,0)  # numpy, greyscale
     return imgrey
   
-def isexit():
-#  if chr(cv.WaitKey(10) & 255) == 'n':
-  if cv.WaitKey(20) > 0:  # any key
-    return(True)
-  else:
-    return(False)
-
