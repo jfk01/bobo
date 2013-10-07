@@ -1,6 +1,6 @@
 Project: BUBO - Computer Vision Platform  
 Author: Jeffrey Byrne <jeff@visym.com>  
-URL: https://bitbucket.org/visym/bubo/  
+URL: https://github.com/visym/bubo/  
 
 
 Overview
