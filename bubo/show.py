@@ -11,7 +11,8 @@ def imshow(im, title=None):
   plt.imshow(im)
   plt.autoscale(tight=True)    
   plt.axis('image')  
-  plt.title(title)
+  if title is not None:
+      plt.title(title)
   plt.draw()
 
 def imbbox(im, xmin, xmax, ymin, ymax, bboxcaption=None):
@@ -27,3 +28,15 @@ def imbbox(im, xmin, xmax, ymin, ymax, bboxcaption=None):
   if bboxcaption is not None:
     plt.text(xmin, ymin, bboxcaption, bbox=dict(facecolor='white', edgecolor='g',alpha=1))
   plt.draw()
+
+def precision_recall(y_precision, x_recall, title=None):
+    plt.clf()
+    plt.plot(x_recall, y_precision, label='Precision-Recall curve')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.ylim([0.0, 1.0])
+    plt.xlim([0.0, 1.0])
+    if title is not None:
+        plt.title(title)
+    plt.legend(loc="lower left")
+    plt.draw()

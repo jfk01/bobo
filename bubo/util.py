@@ -5,6 +5,11 @@ import os.path
 import numpy
 import cv2.cv as cv
 import tempfile
+import time
+from time import gmtime, strftime, localtime
+
+def mdlist(m,n):
+    return [[None]*n for i in range(m)] # preallocate 2D list of size MxN
 
 def isurl(path):
   return urlparse.urlparse(path).scheme != ""
@@ -39,3 +44,23 @@ def numpy2iplimage(im):
   
 def tempimage():
   return tempfile.mktemp()+'.jpg'
+
+
+class Stopwatch(object):    
+    """Return elapsed processor time in seconds between calls to enter and exit"""
+    def __enter__(self):
+        self.start = time.clock()
+        return self
+
+    def __exit__(self, *args):
+        self.end = time.clock()
+        self.elapsed = self.end - self.start
+        
+    
+def timestamp():
+    """Return date and time string in form DDMMMYY_HHMMSS"""
+    return string.upper(strftime("%d%b%y_%I%M%S%p", localtime()))
+
+def datestamp():
+    """Return date and time string in form DDMMMYY"""
+    return string.upper(strftime("%d%b%y", localtime()))
