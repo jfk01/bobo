@@ -7,6 +7,8 @@ import cv2.cv as cv
 import tempfile
 import time
 from time import gmtime, strftime, localtime
+import sys
+
 
 def mdlist(m,n):
     return [[None]*n for i in range(m)] # preallocate 2D list of size MxN
@@ -64,3 +66,8 @@ def timestamp():
 def datestamp():
     """Return date and time string in form DDMMMYY"""
     return string.upper(strftime("%d%b%y", localtime()))
+
+def print_update(status):
+    status = status + chr(8) * (len(status) + 1)
+    print status, # space instead of newline
+    sys.stdout.flush()    

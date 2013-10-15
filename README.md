@@ -34,7 +34,7 @@ Glossary
 * an "analysis" is a consumer of a stream algorithm outputs for interactive study, query or display 
 * In STORM terminology, stream algorithms are "bolt graphs", visets are "spouts", analyses are "bolts"  and a viset + stream algorithm + analysis is a "topology"
 * In directed acyclic graph (DAG) terminology, stream algorithms are "subgraphs", viset is "source vertex", analysis is "sink vertex", viset + stream algorithm + analysis are "graphs"
-* The American (North and South America) horned owls and the Old World eagle-owls make up the genus Bubo.  Owls are renounded for their excellent vision.
+* The American (North and South America) horned owls and the Old World eagle-owls make up the genus Bubo.  Owls are renowned for their excellent vision.
 
 Dependencies
 ------------
