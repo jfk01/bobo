@@ -8,7 +8,7 @@ def preprocess(im):
     
 def predict(im, model):
     labels = model.keys()
-    label = (labels[random.randint(0,len(labels)-1)], random.random())
+    label = labels[random.randint(0,len(labels)-1)]
     print '[dummy.predict]: "%s" ' % str(label)
     return (label, random.random())
     
@@ -16,7 +16,7 @@ def correct(im, label, model=None):
     if model is None:
         model = {}
     if label not in model.keys():
-        model[label] = 0
+        model[label] = 1
     else:            
         model[label] += 1
     print '[dummy.correct]: label = "%s" ' % str(label)

@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import sys
 
 name = 'FrequencyDistributedLabels'
 
@@ -19,7 +20,7 @@ def correct(im, label, model=None):
     if model is None:
         model = {}
     if label not in model.keys():
-        model[label] = 0
+        model[label] = 1
     else:            
         model[label] += 1
     print '[dummy.correct]: label = ' + str(label) + ', im = ' + str(im)

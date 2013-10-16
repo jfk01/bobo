@@ -12,7 +12,7 @@ except:
     db = Viset(Caltech101(verbose=True).export())
 
 # Create input stream with training testing split
-(trainstream, teststream) = db.annotation.categorization.split(strategy='train-test', randomize=True, step=1)
+(trainstream, teststream) = db.annotation.categorization.split(strategy='train-test', randomize=True, step=100)
 
 # Allocate output streams
 dbsink = CategorizationViset('caltech101_' + datestamp() + '.h5', mode='w')

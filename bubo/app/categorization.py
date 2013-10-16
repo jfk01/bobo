@@ -62,13 +62,12 @@ class Categorization(StreamAlgorithm):
     def train_and_test(self, trainstream, teststream, outstream=None, model=None):
         for (im, anno) in trainstream(parallel=self._parallel, async=True):
             model = self.correct(self.preprocess(im), anno['category'], model) 
+            print model
         for (im, anno) in teststream(parallel=self._parallel, async=True):
             print model
-            print im
-            print anno
             with Stopwatch() as stopwatch:
                 (label, score) = self.predict(self.preprocess(im), model) 
-            outstream.write(label, score, stopwatch.elapsed, im.url(), truelabel=anno['category'])
+            outstream.write(label, score, im.url(), stopwatch.elapsed, truelabel=anno['category'])
         outstream.flush()
         return (outstream, model)
 
