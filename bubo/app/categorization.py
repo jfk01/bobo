@@ -62,15 +62,15 @@ class Categorization(StreamAlgorithm):
     def train_and_test(self, trainstream, teststream, outstream=None, model=None):
         for (im, anno) in trainstream(parallel=self._parallel, async=True):
             model = self.correct(self.preprocess(im), anno['category'], model) 
-            print model
+            # separate models for each process?  should we care about combining?
         for (im, anno) in teststream(parallel=self._parallel, async=True):
-            print model
             with Stopwatch() as stopwatch:
                 (label, score) = self.predict(self.preprocess(im), model) 
             outstream.write(label, score, im.url(), stopwatch.elapsed, truelabel=anno['category'])
         outstream.flush()
         return (outstream, model)
 
+    
 class CategorizationStorm(Categorization):
     """Exports thrift structures for storm deployment that implement the stream algorithms on spouts for categorization, and tests storm in local mode"""
     pass
