@@ -45,6 +45,7 @@ viset
 sklearn
 flickrapi
 nltk
+pygame
 
 
 
