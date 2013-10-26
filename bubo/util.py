@@ -10,6 +10,15 @@ from time import gmtime, strftime, localtime
 import sys
 
 
+def imlist(imdir):
+    return [item for item in os.listdir(imdir) if isimg(item)]
+
+
+def imlistidx(filelist, idx_in_filename):
+    """Return index in list of filename containing index number"""
+    return [i for (i, item) in enumerate(filelist) if (item.find('%d' % idx_in_filename) > 0)]
+
+
 def mdlist(m,n):
     return [[None]*n for i in range(m)] # preallocate 2D list of size MxN
 

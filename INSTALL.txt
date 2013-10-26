@@ -1,0 +1,10 @@
+MacOSX
+------
+
+sh> sudo port install opencv +python2.7
+sh> sudo pip install pyzmq
+sh> sudo pip install scikit-learn
+sh> sudo port install py27-scipy
+
+
+ 
