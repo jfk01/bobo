@@ -15,7 +15,7 @@ class Camera(object):
     FRAMERATE = False
     TIC = 0
     TOC = 0
-
+    
 class Webcam(Camera):
     def __init__(self, framerate = False):
         self.CAM = cv.CaptureFromCAM(-1)
@@ -38,6 +38,19 @@ class Webcam(Camera):
             self.TIC = self.TOC
         return bubo.util.iplimage2numpy(imgrey)
 
+
+class MotionStereo(Webcam):    
+    IMCURRENT = None
+    IMPREV = None
+    
+    def next(self):    
+        if self.IMPREV is None:
+            self.IMPREV = super(MotionStereo, self).next()
+        else:
+            self.IMPREV = self.IMCURRENT
+        self.IMCURRENT = super(MotionStereo, self).next()
+        return (self.IMCURRENT, self.IMPREV)
+    
 class Ipcam(Camera):
     TMPFILE = None
     def __init__(self, url, imfile=bubo.util.tempimage()):
