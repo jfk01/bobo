@@ -6,6 +6,7 @@ import pygame
 def tracking(instream, framerate=None):
     # Initialize window
     pygame.init()
+    pygame.font.init()
     (im, anno) = instream(async=True)[0]
     imsize = (im.get().shape[0], im.get().shape[1])
     screen = pygame.display.set_mode(imsize) 
@@ -14,7 +15,8 @@ def tracking(instream, framerate=None):
     img = pygame.image.load(im.url()) 
 
     # Initialize text
-    font = pygame.font.SysFont(None, 12)
+    #font = pygame.font.SysFont(None, 12)
+    font = pygame.font.Font(None, 12)
 
     # Update display
     for (im, anno) in instream(async=True):
