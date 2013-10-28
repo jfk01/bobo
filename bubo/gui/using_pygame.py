@@ -3,11 +3,16 @@ from PIL import Image
 import multiprocessing
 import sys
 import os
+import numpy as np
+from bubo.util import bgr2rgb, numpy2iplimage
+import cv
+import signal
+from time import sleep
 
 # Window state
 IMG = None
 SCREEN = None
-DRAWQUEUE = multiprocessing.Queue()
+DRAWQUEUE = None
 DRAWPROCESS = None
 
 def imshow(im, title):
@@ -29,9 +34,14 @@ def circle(center, radius, color, caption, filled=False, linewidth=1):
     
 def figure(title=None):
     global DRAWPROCESS
+    global DRAWQUEUE
     if (DRAWPROCESS is None) or (DRAWPROCESS.is_alive() == False):
-        DRAWPROCESS = _mainloop(DRAWQUEUE)
-
+        DRAWQUEUE = multiprocessing.Queue()
+        p = multiprocessing.Process(target=_eventloop, args=(DRAWQUEUE,))
+        #p.daemon = True
+        p.start()        
+        DRAWPROCESS = p
+        
 def close():
     global DRAWPROCESS
     if DRAWPROCESS is not None:
@@ -78,15 +88,26 @@ def tracking(instream, framerate=None):
         
         #bbox(, imshape=(im.shape[0], im.shape[1]), bboxcaption=anno['trackid'])
 
-            
+def _pygame_to_cvimage(surface):
+    """Convert a pygame surface into a cv image"""
+    cv_image = cv.CreateImageHeader(surface.get_size(), cv.IPL_DEPTH_8U, 3)
+    image_string = surface_to_string(surface)
+    cv.SetData(cv_image, image_string)
+    return cv_image
+ 
+def _cvimage_to_pygame(image):
+    """Convert cvimage into a pygame image"""
+    image_rgb = cv.CreateMat(image.height, image.width, cv.CV_8UC3)
+    cv.CvtColor(image, image_rgb, cv.CV_BGR2RGB)
+    return pygame.image.frombuffer(image.tostring(), cv.GetSize(image_rgb), "RGB")
+ 
 def _imshow(im, title=None):
     global IMG
     global SCREEN
-
+    
     if (type(im) is str) and os.path.isfile(im):
         imgfile = im
         im = Image.open(imgfile)  # do not load pixel buffer, just get size
-        #SCREEN = pygame.display.set_mode(im.size, pygame.RESIZABLE) 
         SCREEN = pygame.display.set_mode(im.size)         
         if title is not None:
             pygame.display.set_caption(title)
@@ -94,13 +115,13 @@ def _imshow(im, title=None):
         SCREEN.blit(IMG, (0,0))
         pygame.display.flip() # update the display                
     else:
-        SCREEN = pygame.display.set_mode(im.shape) 
+        im = im.transpose(1,0,2)
+        im = im[:, :, ::-1]  # bgr -> rgb
+        SCREEN = pygame.display.set_mode((im.shape[0], im.shape[1])) 
+        pygame.surfarray.blit_array(SCREEN, np.uint8(im))
         if title is not None:
-            pygame.display.set_caption(title)
-        pygame.surfarray.blit_array(SCREEN, im)
+            pygame.display.set_caption(title)        
         pygame.display.flip() # update the display                
-    pygame.event.set_grab(True)
-    pygame.event.set_grab(False)    
 
     
 def _circle(pos, radius, color='green', caption=None, filled=False, linewidth=1):    
@@ -160,53 +181,52 @@ def _ellipse(bbox, color='green', caption=None, filled=False, linewidth=1):
 def _fullscreen():
     pygame.display.toggle_fullscreen()  # doesn't work
 
+def _signal_handle(signal,frame):
+    sys.stdout.flush()
+    pygame.quit()
+    print "Stopping the Jobs."
+    raise KeyboardInterrupt()
+
+#signal.signal(signal.SIGINT,_signal_handle)
+
+def _eventloop(drawqueue):
+    pygame.init()
+    pygame.display.set_icon(pygame.image.load('/Users/jebyrne/dev/bubo/data/visym_owl.png'))        
+
+    # Ignore keyboard interrupt
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+        
+    # Initialize display
+    global SCREEN
+    SCREEN = pygame.display.set_mode((320, 240))         
+    pygame.display.set_caption('Figure')
+    pygame.display.flip() # update the display                
     
-def _mainloop(drawqueue):
-    def _mainloop_(drawqueue):
-        import pygame
-        pygame.init()
-        pygame.display.set_icon(pygame.image.load('/Users/jebyrne/dev/bubo/data/visym_owl.png'))        
+    # Event loop
+    Clock = pygame.time.Clock()
+    done = False
+    while not done:
+        # GUI events
+        Clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    done = True 
 
-        # Initialize display
-        global SCREEN
-        SCREEN = pygame.display.set_mode((320, 240))         
-        pygame.display.set_caption('Figure')
-        pygame.display.flip() # update the display                
-
-        # Event loop
-        Clock = pygame.time.Clock()
-        done = False
-        while not done:
-            try:
-                # GUI events
-                Clock.tick(60)
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        done = True 
-                    elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE:
-                            done = True 
-
-                # Drawing events
-                if not drawqueue.empty():
-                    (funcname, args) = drawqueue.get()
-                    func = globals()[funcname]
-                    if args is not None:
-                        func(*args)
-                    else:
-                        func()
-
-            except KeyboardInterrupt:
-                done = True
-            except:
-                raise
+        # Drawing events
+        if not drawqueue.empty():
+            (funcname, args) = drawqueue.get()
+            func = globals()[funcname]
+            if args is not None:
+                func(*args)
+            else:
+                func()
             
-        sys.stdout.flush()
-        pygame.display.quit()
-
-    p = multiprocessing.Process(target=_mainloop_, args=(drawqueue,))
-    p.daemon = True
-    p.start()        
-    return p
+    sys.stdout.flush()
+    pygame.quit()
+    sys.exit()
+    
 
 

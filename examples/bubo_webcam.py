@@ -1,9 +1,9 @@
+import bubo.show
 from bubo.camera import Webcam
-from bubo.show import imshow
 
 def main():
     for im in Webcam(framerate=True):
-        imshow(im, title='Webcam', use='opencv')
+        bubo.show.imshow(im, title='Webcam', using='opencv')
   
 if __name__ == '__main__':
     main()

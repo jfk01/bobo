@@ -6,6 +6,9 @@ def backend(using='pygame'):
     global BACKEND
     BACKEND = importlib.import_module('bubo.gui.using_%s' % using)
 
+def using(using_='pygame'):
+    backend(using_)
+    
 def figure(title=None):
     BACKEND.figure(title)
 
@@ -15,7 +18,10 @@ def close():
 #def fullscreen():
 #    BACKEND.fullscreen()
     
-def imshow(im, title=None):    
+def imshow(im, title=None, using=None):    
+    global BACKEND
+    if using is not None:
+        backend(using)
     BACKEND.imshow(im, title)
     
 def rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):

@@ -30,13 +30,12 @@ class Webcam(Camera):
 
     def next(self):    
         im = cv.QueryFrame(self.CAM)
-        imgrey = cv.CreateImage(cv.GetSize(im), im.depth, 1)
-        cv.CvtColor(im,imgrey, cv.CV_BGR2GRAY)
         if self.FRAMERATE:
             self.TOC = timeit.default_timer()
             print '[bubo.camera]: frame rate = ' + str(round(1.0/(self.TOC-self.TIC),1)) + ' Hz'
             self.TIC = self.TOC
-        return bubo.util.iplimage2numpy(imgrey)
+        return bubo.util.iplimage2numpy(im)
+
 
 
 class MotionStereo(Webcam):    
@@ -62,6 +61,5 @@ class Ipcam(Camera):
 
     def next(self):
         urllib.urlretrieve(self.CAM, self.TMPFILE)
-        imgrey = cv2.imread(self.TMPFILE, 0)  # numpy, greyscale
-        return imgrey
+        return cv2.imread(self.TMPFILE)  # numpy
   
