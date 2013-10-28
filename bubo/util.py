@@ -52,7 +52,17 @@ def iplimage2numpy(im):
 
 def numpy2iplimage(im):
   return(cv.fromarray(im))
-  
+
+def bgr2grey(im_bgr):
+    imgrey = cv.CreateImage(cv.GetSize(im_bgr), cv.IPL_DEPTH_8U, 1)
+    cv.CvtColor(im_bgr, imgrey, cv.CV_BGR2GRAY)
+    return imgrey
+
+def bgr2rgb(im_bgr):
+    im_rgb = cv.CreateImage(cv.GetSize(im_bgr), cv.IPL_DEPTH_8U, 3)
+    cv.CvtColor(im_bgr, im_rgb, cv.CV_BGR2RGB)
+    return im_rgb
+
 def tempimage():
   return tempfile.mktemp()+'.jpg'
 

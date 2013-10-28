@@ -1,7 +1,20 @@
 import pygame
+from PIL import Image
+import multiprocessing
+import sys
 
-# pygame.display.toggle_fullscreen 
-#pygame.display.quit()
+# Window state
+IMG = None
+SCREEN = None
+DRAWQUEUE = multiprocessing.Queue()
+
+
+def imshow(imgfile, title):
+    DRAWQUEUE.put(('_imshow', (imgfile, title)))
+
+def rectangle(bbox, caption):
+    DRAWQUEUE.put(('_rectangle', (bbox, caption)))
+    
 
 def tracking(instream, framerate=None):
     # Initialize window
@@ -39,3 +52,76 @@ def tracking(instream, framerate=None):
         
         #bbox(, imshape=(im.shape[0], im.shape[1]), bboxcaption=anno['trackid'])
 
+
+
+
+def _imshow(imgfile, title=None):
+    global IMG
+    global SCREEN
+
+    im = Image.open(imgfile)  # do not load pixel buffer, just get size
+    SCREEN = pygame.display.set_mode(im.size) 
+    if title is not None:
+        pygame.display.set_caption(title)
+    IMG = pygame.image.load(imgfile) 
+    SCREEN.blit(IMG, (0,0))
+    pygame.display.flip() # update the display                
+
+def _rectangle(bbox, caption=None):
+    global IMG
+    global SCREEN
+    
+    font = pygame.font.SysFont(None, 12)
+    pygame.draw.rect(IMG, (255,0,0), bbox, 1)
+    SCREEN.blit(IMG, (0,0))
+    text = font.render('%s' % caption, 1, (0, 255, 0))
+    textrect = text.get_rect()
+    textrect.centerx = bbox[0] 
+    textrect.centery = bbox[1]
+    IMG.blit(text, textrect)
+    pygame.display.flip() # update the display                
+    
+
+def _fullscreen():
+    pygame.display.toggle_fullscreen()
+
+def _close():
+    pygame.display.quit()
+
+    
+
+def _mainloop(drawqueue):
+    def _mainloop_(drawqueue):
+        import pygame
+        pygame.init()
+
+        Clock = pygame.time.Clock()
+        done = False
+        while not done:
+            # GUI events
+            Clock.tick(30)
+            #pygame.display.set_caption("Press Esc to quit. FPS: %.2f" % (Clock.get_fps()))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True # Be IDLE friendly!
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        done = True # Be IDLE friendly!
+
+            # Drawing events
+            if not drawqueue.empty():
+                (funcname, args) = drawqueue.get()
+                func = globals()[funcname]
+                func(*args)
+                        
+        print 'quitting'
+        sys.stdout.flush()
+        pygame.display.quit()
+
+    p = multiprocessing.Process(target=_mainloop_, args=(drawqueue,))
+    p.daemon = True
+    p.start()        
+
+    
+# Execute mainloop!
+_mainloop(DRAWQUEUE)
