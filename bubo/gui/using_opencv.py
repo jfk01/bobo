@@ -1,9 +1,9 @@
 import numpy as np
-import cv2.cv as cv
+import cv2
 from bubo.util import numpy2iplimage
 
 def imshow(im, title=None):    
-    cv.ShowImage(title, numpy2iplimage(im))        
+    cv2.imshow(title, im)        
 
 def imbbox(im, xmin, xmax, ymin, ymax, bboxcaption=None):
     pass

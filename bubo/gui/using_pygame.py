@@ -5,9 +5,12 @@ import sys
 import os
 import numpy as np
 from bubo.util import bgr2rgb, numpy2iplimage
-import cv
+import cv2
+import cv2.cv as cv
 import signal
 from time import sleep
+import matplotlib.cm as cm 
+
 
 # Window state
 IMG = None
@@ -31,7 +34,15 @@ def circle(center, radius, color, caption, filled=False, linewidth=1):
     figure()
     DRAWQUEUE.put(('_circle', (center, radius, color, caption, filled, linewidth)))
 
-    
+
+def frame(fr, im, color, caption):
+    figure()
+    DRAWQUEUE.put(('_frame', (fr, im, color, caption)))
+
+def scatter(fr, im, color):
+    figure()
+    DRAWQUEUE.put(('_scatter', (fr, im, color)))
+
 def figure(title=None):
     global DRAWPROCESS
     global DRAWQUEUE
@@ -101,7 +112,7 @@ def _cvimage_to_pygame(image):
     cv.CvtColor(image, image_rgb, cv.CV_BGR2RGB)
     return pygame.image.frombuffer(image.tostring(), cv.GetSize(image_rgb), "RGB")
  
-def _imshow(im, title=None):
+def _imshow(im, title=None, flip=True):
     global IMG
     global SCREEN
     
@@ -113,16 +124,19 @@ def _imshow(im, title=None):
             pygame.display.set_caption(title)
         IMG = pygame.image.load(imgfile) 
         SCREEN.blit(IMG, (0,0))
-        pygame.display.flip() # update the display                
     else:
-        im = im.transpose(1,0,2)
-        im = im[:, :, ::-1]  # bgr -> rgb
+        if im.ndim == 2:
+            im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)            
+            im = im.transpose(1,0,2)            
+        else:
+            im = im.transpose(1,0,2)
+            im = im[:, :, ::-1]  # bgr -> rgb
         SCREEN = pygame.display.set_mode((im.shape[0], im.shape[1])) 
         pygame.surfarray.blit_array(SCREEN, np.uint8(im))
         if title is not None:
             pygame.display.set_caption(title)        
-        pygame.display.flip() # update the display                
-
+    if flip:
+        pygame.display.flip() # update the display                        
     
 def _circle(pos, radius, color='green', caption=None, filled=False, linewidth=1):    
     global IMG
@@ -176,24 +190,38 @@ def _ellipse(bbox, color='green', caption=None, filled=False, linewidth=1):
     SCREEN.blit(text, textrect)    
     
     pygame.display.flip() # update the display                
-    
 
+def _frame(fr, im=None, color='green', linewidth=1):
+    global SCREEN
+
+    _imshow(im, flip=False)
+    for xysr in fr.transpose():
+        bbox = (xysr[0], xysr[1], 10, 10)
+        pygame.draw.rect(SCREEN, pygame.Color(color), bbox, 1)
+        #pygame.draw.aalines(SCREEN, pygame.Color(color), True, pointlist, blend=1)  # for rotated square
+    pygame.display.flip() # update the display                
+
+def _scatter(fr, im=None, color='green', linewidth=1):
+    global SCREEN
+
+    n_frame = fr.shape[1]
+    cmap = cm.get_cmap('jet', n_frame) 
+    rgb = np.uint8(255*cmap(np.arange(n_frame)))
+    _imshow(im, flip=False)
+    for (i,xysr) in enumerate(fr.transpose()):
+        pygame.draw.circle(SCREEN, pygame.Color(int(rgb[i,0]), int(rgb[i,1]), int(rgb[i,2]), int(rgb[i,3])), (int(xysr[0]), int(xysr[1])), 1, 1)        
+    pygame.display.flip() # update the display                
+
+    
 def _fullscreen():
     pygame.display.toggle_fullscreen()  # doesn't work
 
-def _signal_handle(signal,frame):
-    sys.stdout.flush()
-    pygame.quit()
-    print "Stopping the Jobs."
-    raise KeyboardInterrupt()
-
-#signal.signal(signal.SIGINT,_signal_handle)
 
 def _eventloop(drawqueue):
     pygame.init()
     pygame.display.set_icon(pygame.image.load('/Users/jebyrne/dev/bubo/data/visym_owl.png'))        
 
-    # Ignore keyboard interrupt
+    # Ignore keyboard interrupt (passthrough to parent)
     signal.signal(signal.SIGINT, signal.SIG_IGN)
         
     # Initialize display
@@ -213,10 +241,13 @@ def _eventloop(drawqueue):
                 done = True 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    done = True 
+                    #done = True 
+                    done = False
 
         # Drawing events
         if not drawqueue.empty():
+            # BUG: filling queue may be faster than emptying, so real time has lag, 
+            # wait until queue is empty to continue on put, or change to pipe?
             (funcname, args) = drawqueue.get()
             func = globals()[funcname]
             if args is not None:

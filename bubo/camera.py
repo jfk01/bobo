@@ -15,26 +15,33 @@ class Camera(object):
     FRAMERATE = False
     TIC = 0
     TOC = 0
+    RESIZE = None
+    GREY = None
     
 class Webcam(Camera):
-    def __init__(self, framerate = False):
-        self.CAM = cv.CaptureFromCAM(-1)
-        im = cv.QueryFrame(self.CAM)
-        im = cv.QueryFrame(self.CAM)
+    def __init__(self, framerate=False, resize=1, grey=False):
+        self.CAM = cv2.VideoCapture(0)
         self.FRAMERATE = framerate
+        self.RESIZE = resize
+        self.GREY = grey
         if framerate:
             self.TIC = timeit.default_timer()
-    
+        self.next()
+            
     def __iter__(self):
         return self
 
     def next(self):    
-        im = cv.QueryFrame(self.CAM)
+        (rval, im) = self.CAM.read()
+        if self.RESIZE != 1:
+            im = cv2.resize(im, (0,0), fx=self.RESIZE, fy=self.RESIZE) 
+        if self.GREY:
+            im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         if self.FRAMERATE:
             self.TOC = timeit.default_timer()
             print '[bubo.camera]: frame rate = ' + str(round(1.0/(self.TOC-self.TIC),1)) + ' Hz'
             self.TIC = self.TOC
-        return bubo.util.iplimage2numpy(im)
+        return im
 
 
 

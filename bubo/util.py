@@ -3,6 +3,7 @@ import urlparse
 import string
 import os.path
 import numpy
+import cv2
 import cv2.cv as cv
 import tempfile
 import time
@@ -50,9 +51,15 @@ def iplimage2numpy(im):
   mat = mat.astype(numpy.uint8)  # force unsigned char for ctypes
   return mat
 
+def opencv2numpy(im):
+  return iplimage2numpy(im)
+
 def numpy2iplimage(im):
   return(cv.fromarray(im))
 
+def numpy2opencv(im):
+  return numpy2iplimage(im)
+  
 def bgr2grey(im_bgr):
     imgrey = cv.CreateImage(cv.GetSize(im_bgr), cv.IPL_DEPTH_8U, 1)
     cv.CvtColor(im_bgr, imgrey, cv.CV_BGR2GRAY)
@@ -65,6 +72,9 @@ def bgr2rgb(im_bgr):
 
 def tempimage():
   return tempfile.mktemp()+'.jpg'
+
+def imread(imfile):
+    return cv2.imread(imfile)
 
 
 class Stopwatch(object):    
