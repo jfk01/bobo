@@ -18,6 +18,13 @@ SCREEN = None
 DRAWQUEUE = None
 DRAWPROCESS = None
 
+def _sigint_handler(signum, frame):
+    sys.stdout.flush()
+    pygame.quit()
+    sys.exit()
+
+# FIXME:can do one ctrl-c in ipython, but not two due to opencv and pygame reinitialization segfault
+signal.signal(signal.SIGINT, _sigint_handler)
 
 def _drawqueue(funcname, argtuple):
     global DRAWQUEUE
@@ -228,14 +235,11 @@ def _scatter(fr, im=None, color='green', linewidth=1):
 def _fullscreen():
     pygame.display.toggle_fullscreen()  # doesn't work
 
-
+        
 def _eventloop(drawqueue):
     pygame.init()
     pygame.display.set_icon(pygame.image.load('/Users/jebyrne/dev/bubo/data/visym_owl.png'))        
 
-    # Ignore keyboard interrupt (passthrough to parent)
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
-        
     # Initialize display
     global SCREEN
     SCREEN = pygame.display.set_mode((320, 240))         
