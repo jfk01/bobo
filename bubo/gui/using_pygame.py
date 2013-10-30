@@ -18,30 +18,37 @@ SCREEN = None
 DRAWQUEUE = None
 DRAWPROCESS = None
 
+
+def _drawqueue(funcname, argtuple):
+    global DRAWQUEUE
+    while DRAWQUEUE.empty() == False:
+        sleep(0.01)  
+    DRAWQUEUE.put((funcname, argtuple))
+    
 def imshow(im, title):
     figure()
-    DRAWQUEUE.put(('_imshow', (im, title)))
+    _drawqueue('_imshow', (im, title))
 
 def rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):
     figure()
-    DRAWQUEUE.put(('_rectangle', (bbox, color, caption, filled, linewidth)))
+    _drawqueue('_rectangle', (bbox, color, caption, filled, linewidth))
 
 def ellipse(bbox, color='green', caption=None, filled=False, linewidth=1):
     figure()
-    DRAWQUEUE.put(('_ellipse', (bbox, color, caption, filled, linewidth)))
+    _drawqueue('_ellipse', (bbox, color, caption, filled, linewidth))
     
 def circle(center, radius, color, caption, filled=False, linewidth=1):
     figure()
-    DRAWQUEUE.put(('_circle', (center, radius, color, caption, filled, linewidth)))
+    _drawqueue('_circle', (center, radius, color, caption, filled, linewidth))
 
 
 def frame(fr, im, color, caption):
     figure()
-    DRAWQUEUE.put(('_frame', (fr, im, color, caption)))
+    _drawqueue('_frame', (fr, im, color, caption))
 
 def scatter(fr, im, color):
     figure()
-    DRAWQUEUE.put(('_scatter', (fr, im, color)))
+    _drawqueue('_scatter', (fr, im, color))
 
 def figure(title=None):
     global DRAWPROCESS
@@ -62,7 +69,7 @@ def close():
 
 def fullscreen():        
     figure()
-    DRAWQUEUE.put(('_fullscreen', None))
+    _drawqueue('_fullscreen', None)
     
     
 def tracking(instream, framerate=None):
@@ -197,8 +204,13 @@ def _frame(fr, im=None, color='green', linewidth=1):
     _imshow(im, flip=False)
     for xysr in fr.transpose():
         bbox = (xysr[0], xysr[1], 10, 10)
-        pygame.draw.rect(SCREEN, pygame.Color(color), bbox, 1)
-        #pygame.draw.aalines(SCREEN, pygame.Color(color), True, pointlist, blend=1)  # for rotated square
+        s = xysr[2]
+        th = xysr[3]
+        R = np.mat([[np.cos(th), -np.sin(th)], [np.sin(th), np.cos(th)]])
+        x = np.mat([ [-10, +10, +10, -10], [-10, -10, +10, +10] ])
+        y = R*((s/10)*x)
+        #pygame.draw.rect(SCREEN, pygame.Color(color), bbox, 1)
+        pygame.draw.aalines(SCREEN, pygame.Color(color), True, [(xysr[0]+y[0,0],xysr[1]+y[1,0]), (xysr[0]+y[0,1],xysr[1]+y[1,1]), (xysr[0]+y[0,2],xysr[1]+y[1,2]), (xysr[0]+y[0,3],xysr[1]+y[1,3])])  # for rotated square
     pygame.display.flip() # update the display                
 
 def _scatter(fr, im=None, color='green', linewidth=1):
@@ -246,8 +258,6 @@ def _eventloop(drawqueue):
 
         # Drawing events
         if not drawqueue.empty():
-            # BUG: filling queue may be faster than emptying, so real time has lag, 
-            # wait until queue is empty to continue on put, or change to pipe?
             (funcname, args) = drawqueue.get()
             func = globals()[funcname]
             if args is not None:
