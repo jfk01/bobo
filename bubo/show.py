@@ -1,6 +1,12 @@
 import importlib
 
-BACKEND = importlib.import_module('bubo.gui.using_pygame')
+BACKEND = importlib.import_module('bubo.gui.using_matplotlib')
+
+def pause():
+    try:
+        wait = raw_input("[bubo.show.pause]: press enter to continue:  ")
+    except KeyboardInterrupt:
+        raise
 
 def backend(using='pygame'):
     global BACKEND
@@ -38,6 +44,9 @@ def circle(center, radius, color='green', caption=None, filled=False, linewidth=
     
 def boundingbox(bbox, caption, color='green'):
     rectangle(bbox, caption=caption, filled=False, linewidth=1, color=color)
+
+def tracks(im, bbox, bboxcolor='green', caption=None, captioncolor='red'):
+    BACKEND.tracks(im, bbox, bboxcolor, caption, captioncolor)
     
 def frame(fr, im=None, color='green', caption=False):
     BACKEND.frame(fr, im, color, caption)

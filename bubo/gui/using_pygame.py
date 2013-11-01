@@ -53,6 +53,10 @@ def frame(fr, im, color, caption):
     figure()
     _drawqueue('_frame', (fr, im, color, caption))
 
+def tracks(im, bbox, bboxcolor, caption, captioncolor):
+    figure()
+    _drawqueue('_tracks', (im, bbox, bboxcolor, caption, captioncolor))
+    
 def scatter(fr, im, color):
     figure()
     _drawqueue('_scatter', (fr, im, color))
@@ -169,7 +173,7 @@ def _circle(pos, radius, color='green', caption=None, filled=False, linewidth=1)
     pygame.display.flip() # update the display                
 
     
-def _rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):
+def _rectangle(bbox, color='green', caption=None, captioncolor='red', filled=False, linewidth=1, flip=True):
     global IMG
     global SCREEN
     
@@ -178,14 +182,15 @@ def _rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):
         linewidth = 0
     pygame.draw.rect(SCREEN, pygame.Color(color), bbox, linewidth)
     #SCREEN.blit(IMG, (0,0))
-    text = font.render('%s' % caption, 1, (0, 255, 0))
+    text = font.render('%s' % caption, 1, pygame.Color(captioncolor))
     textrect = text.get_rect()
     textrect.centerx = bbox[0] 
     textrect.centery = bbox[1]
     #IMG.blit(text, textrect)
     SCREEN.blit(text, textrect)    
-    
-    pygame.display.flip() # update the display                
+
+    if flip:
+        pygame.display.flip() # update the display                
 
 def _ellipse(bbox, color='green', caption=None, filled=False, linewidth=1):
     global IMG
@@ -220,6 +225,16 @@ def _frame(fr, im=None, color='green', linewidth=1):
         pygame.draw.aalines(SCREEN, pygame.Color(color), True, [(xysr[0]+y[0,0],xysr[1]+y[1,0]), (xysr[0]+y[0,1],xysr[1]+y[1,1]), (xysr[0]+y[0,2],xysr[1]+y[1,2]), (xysr[0]+y[0,3],xysr[1]+y[1,3])])  # for rotated square
     pygame.display.flip() # update the display                
 
+    
+def _tracks(im, bbox, bboxcolor, caption, captioncolor):
+    global SCREEN
+
+    _imshow(im, flip=False)
+    for (bb,cap) in zip(bbox, caption):
+        _rectangle(bb, bboxcolor, cap, captioncolor, flip=False)
+    pygame.display.flip() # update the display                
+
+    
 def _scatter(fr, im=None, color='green', linewidth=1):
     global SCREEN
 
@@ -238,7 +253,8 @@ def _fullscreen():
         
 def _eventloop(drawqueue):
     pygame.init()
-    pygame.display.set_icon(pygame.image.load('/Users/jebyrne/dev/bubo/data/visym_owl.png'))        
+    imfile = os.path.join(os.path.dirname(__file__),'..','..','data','visym_owl.png')
+    pygame.display.set_icon(pygame.image.load(imfile))
 
     # Initialize display
     global SCREEN
