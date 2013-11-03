@@ -128,8 +128,12 @@ def mkdir(newdir):
     if not os.path.isdir(newdir):
         os.mkdir(newdir)
 
-def tempimage():
-  return tempfile.mktemp()+'.jpg'
+def tempimage(ext='jpg'):
+  return tempfile.mktemp() + '.' + ext
+
+def temppng():
+  return tempimage('png')
+
 
 def imread(imfile):
     return cv2.imread(imfile)

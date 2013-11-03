@@ -24,6 +24,7 @@ def _sigint_handler(signum, frame):
     sys.exit()
 
 # FIXME:can do one ctrl-c in ipython, but not two due to opencv and pygame reinitialization segfault
+# this segfault makes pygame currently unusable as a general gui solution
 signal.signal(signal.SIGINT, _sigint_handler)
 
 def _drawqueue(funcname, argtuple):
@@ -241,6 +242,7 @@ def _flow(fr, uv_flow):
     #hsv[...,0] = ang*180/np.pi/2
     #hsv[...,2] = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX)
     #rgb = cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
+    pass
     
 def _scatter(fr, im=None, color='green', linewidth=1):
     global SCREEN

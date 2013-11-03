@@ -1,12 +1,6 @@
 import importlib
 
-BACKEND = importlib.import_module('bubo.gui.using_matplotlib')
-
-def pause():
-    try:
-        wait = raw_input("[bubo.show.pause]: press enter to continue:  ")
-    except KeyboardInterrupt:
-        raise
+BACKEND = importlib.import_module('bubo.gui.using_opencv')
 
 def backend(using='pygame'):
     global BACKEND
@@ -16,22 +10,24 @@ def backend(using='pygame'):
     
 def using(using_='pygame'):
     backend(using_)
+
+def pause():
+    BACKEND.pause()
     
 def figure(title=None):
-    global BACKEND
     BACKEND.figure(title)
 
-def close():
-    BACKEND.close()
+def close(title=None):
+    BACKEND.close(title)
 
+def closeall():
+    BACKEND.closeall()
+    
 #def fullscreen():
 #    BACKEND.fullscreen()
     
-def imshow(im, title=None, using=None):    
-    global BACKEND
-    if using is not None:
-        backend(using)
-    BACKEND.imshow(im, title)
+def imshow(im, handle=None):    
+    BACKEND.imshow(im, handle)
     
 def rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):
     BACKEND.rectangle(bbox, color, caption, filled, linewidth)
@@ -53,4 +49,9 @@ def frame(fr, im=None, color='green', caption=False):
 
 def scatter(fr, im=None, color='green'):
     BACKEND.scatter(fr, im, color)
-    
+
+def text(ij, caption, color):    
+    BACKEND.text(ij, caption, color)
+
+def savefig(handle=None, filename=None):
+    return BACKEND.savefig(handle, filename)
