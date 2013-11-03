@@ -11,18 +11,17 @@ import tempfile
 import multiprocessing
 import signal 
 import sys
+from bubo.util import imresize
 
 
 def _captureloop(imqueue):
-    def _sigint_handler(signum, frame):
-        sys.exit()
+    #def _sigint_handler(signum, frame):
+    #    sys.exit()
     #signal.signal(signal.SIGINT, _sigint_handler)
     #signal.signal(signal.SIGTERM, _sigint_handler)    
     cam = cv2.VideoCapture(0)
     while True:
-        if imqueue.empty():
-            imqueue.put(cam.read())
-        cv2.waitKey(1)
+        imqueue.put(cam.read())
 
 class Camera(object):
     CAM = None
@@ -35,7 +34,7 @@ class Camera(object):
     
 class Webcam(Camera):
     def __init__(self, framerate=False, resize=1, grey=False):
-        self.CAM = multiprocessing.Queue()
+        self.CAM = multiprocessing.Queue(maxsize=1)
         self.FRAMERATE = framerate
         self.RESIZE = resize
         self.GREY = grey
@@ -51,14 +50,13 @@ class Webcam(Camera):
         return self
 
     def _read(self):
-        while True:
-            if not self.CAM.empty():
-                return self.CAM.get()
+        im = self.CAM.get()
+        return self.CAM.get() # HACK: for slow processing to get most recent image
         
     def next(self):    
         (rval, im) = self._read()
         if self.RESIZE != 1:
-            im = cv2.resize(im, (0,0), fx=self.RESIZE, fy=self.RESIZE) 
+            im = imresize(im, self.RESIZE) 
         if self.GREY:
             im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         if self.FRAMERATE:
@@ -77,9 +75,10 @@ class MotionStereo(Webcam):
         if self.IMPREV is None:
             self.IMPREV = super(MotionStereo, self).next()
         else:
-            self.IMPREV = self.IMCURRENT
+            self.IMPREV = self.IMCURRENT.copy()
         self.IMCURRENT = super(MotionStereo, self).next()
         return (self.IMCURRENT, self.IMPREV)
+
     
 class Ipcam(Camera):
     TMPFILE = None

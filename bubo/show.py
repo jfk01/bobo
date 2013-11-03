@@ -55,3 +55,9 @@ def text(ij, caption, color):
 
 def savefig(handle=None, filename=None):
     return BACKEND.savefig(handle, filename)
+
+def opticalflow(im, flow):
+    return BACKEND.opticalflow(im, flow)
+
+def sparseflow(im, flow):
+    return BACKEND.sparseflow(im, flow)

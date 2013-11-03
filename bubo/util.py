@@ -138,6 +138,8 @@ def temppng():
 def imread(imfile):
     return cv2.imread(imfile)
 
+def imresize(im, scale):
+    return cv2.resize(im, (0,0), fx=scale, fy=scale, interpolation=cv2.cv.CV_INTER_LINEAR) 
 
 class Stopwatch(object):    
     """Return elapsed processor time in seconds between calls to enter and exit"""

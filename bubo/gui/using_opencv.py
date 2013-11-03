@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-import threading, multiprocessing
+import multiprocessing
 import sys
 from time import sleep
 import signal
@@ -123,7 +123,7 @@ def _im2bgr(im):
 def frame(fr, im, color, caption):
     im = _im2bgr(im)
     c = _color(color)
-    for xysr in fr.transpose():
+    for xysr in fr:
         bbox = (xysr[0], xysr[1], 10, 10)
         s = xysr[2]
         th = xysr[3]
@@ -168,14 +168,27 @@ def savefig(handle=None, filename=None):
     cv2.imwrite(filename, WINDOWSTATE['windows'][WINDOWSTATE['focus']][0])
     return filename
     
-def show_imgdir(imgdir):
-    # >>> nsd.show_imgdir("C:\\jebyrne\\penn\\datasets\\altoids")
-    print 'Displaying imagery from directory ' + imgdir 
-    imglist = glob.glob(os.path.join(imgdir,'*.jpg'))
-    for f in imglist:
-        img = cv.LoadImage(f)
-        thumbnail = cv.CreateMat(img.height / 8, img.width / 8, cv.CV_8UC3)
-        cv.Resize(img, thumbnail)
-        cv.NamedWindow('display')
-        cv.ShowImage('display', thumbnail)
-        cv.WaitKey(1)  # 1ms
+def opticalflow(im, uv_flow):
+    # https://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_video/py_lucas_kanade/py_lucas_kanade.html
+    (mag, ang) = cv2.cartToPolar(uv_flow[...,0], uv_flow[...,1])
+    hsv = np.zeros((im.shape[0], im.shape[1], 3))
+    hsv[...,1] = 255
+    hsv[...,0] = ang*180/np.pi/2
+    hsv[...,2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+    imbgr = cv2.cvtColor(np.float32(hsv), cv2.COLOR_HSV2BGR)
+    imshow(imbgr)
+    # FIXME: this is broken
+
+def sparseflow(im, ijuv_flow, maxflow=16):
+    im = _im2bgr(im)
+    (mag, ang) = cv2.cartToPolar(ijuv_flow[:,2], ijuv_flow[:,3])
+    hsv = np.zeros( (1, ijuv_flow.shape[0], 3) )
+    hsv[:,:,1:2] = 255
+    hsv[:,:,0:1] = ang*180/np.pi/2
+    hsv[:,:,2:3] = cv2.normalize(np.clip(mag,0,maxflow), None, 0, 255, cv2.NORM_MINMAX)
+    bgr = cv2.cvtColor(np.uint8(hsv), cv2.COLOR_HSV2BGR)
+    for (k, ijuv) in enumerate(ijuv_flow):
+        c = cv2.cv.Scalar( int(bgr[0,k,0]), int(bgr[0,k,1]), int(bgr[0,k,2]))
+        cv2.circle(im, (int(ijuv[0]),int(ijuv[1])), radius=2, color=c, thickness=-1)
+    _flip(im, figure('sparse optical flow')) # update the display 
+
