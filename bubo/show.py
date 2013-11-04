@@ -1,6 +1,7 @@
 import importlib
 
-BACKEND = importlib.import_module('bubo.gui.using_matplotlib')
+#BACKEND = importlib.import_module('bubo.gui.using_matplotlib')
+BACKEND = importlib.import_module('bubo.gui.using_pygame')
 
 def pause():
     try:

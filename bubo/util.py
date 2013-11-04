@@ -12,6 +12,13 @@ import sys
 import csv
 
 
+def ndmax(A):
+    return np.unravel_index(A.argmax(), A.shape)
+
+def ndmin(A):
+    return np.unravel_index(A.argmin(), A.shape)
+
+
 def uniform_random_in_range(rng=(0,1)):
     return (rng[1] - rng[0]) * np.random.random_sample() + rng[0]
 
