@@ -192,3 +192,11 @@ def sparseflow(im, ijuv_flow, maxflow=16):
         cv2.circle(im, (int(ijuv[0]),int(ijuv[1])), radius=2, color=c, thickness=-1)
     _flip(im, figure('sparse optical flow')) # update the display 
 
+    
+def disparity(disp, maxdisparity=None):
+    if maxdisparity is None:
+        maxdisparity = np.percentile(disp[np.nonzero(disp)], 95)  # robust colormap
+    imdisp = np.mat((255*np.clip(np.float32(disp), 0, maxdisparity)) / maxdisparity, dtype=np.uint8)
+    imdisp = cv2.applyColorMap(imdisp, cv2.COLORMAP_JET)
+    _flip(imdisp, figure('disparity')) # update the display 
+    

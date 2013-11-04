@@ -61,3 +61,6 @@ def opticalflow(im, flow):
 
 def sparseflow(im, flow):
     return BACKEND.sparseflow(im, flow)
+
+def disparity(disp, maxdisparity=None):
+    return BACKEND.disparity(disp, maxdisparity)
