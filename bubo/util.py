@@ -15,6 +15,8 @@ import csv
 def uniform_random_in_range(rng=(0,1)):
     return (rng[1] - rng[0]) * np.random.random_sample() + rng[0]
 
+
+# <MOVED> tO bubo.geometry
 def similarity_imtransform(txy=(0,0), r=0, s=1):
     R = np.mat([[np.cos(r), -np.sin(r), 0], [np.sin(r), np.cos(r), 0], [0,0,1]])
     S = np.mat([[s,0,0], [0, s, 0], [0,0,1]])
@@ -35,6 +37,7 @@ def random_affine_imtransform(txy=((0,0),(0,0)), r=(0,0), sx=(1,1), sy=(1,1), kx
                               sy=uniform_random_in_range(sy),
                               kx=uniform_random_in_range(kx),
                               ky=uniform_random_in_range(ky))
+# </MOVED>
 
 def imtransform(im, A):
     # cv2.warpPerspective(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) -> dst

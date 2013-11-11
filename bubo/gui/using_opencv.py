@@ -200,3 +200,10 @@ def disparity(disp, maxdisparity=None):
     imdisp = cv2.applyColorMap(imdisp, cv2.COLORMAP_JET)
     _flip(imdisp, figure('disparity')) # update the display 
     
+def impolygon(im, poly, color='green'):
+    im = _im2bgr(im)
+    c = _color(color)
+    for p in poly:
+        cv2.polylines(im, p, isClosed=True, color=c, thickness=1, lineType=cv2.CV_AA)
+    _flip(im, figure('polygon')) # update the display                
+    
