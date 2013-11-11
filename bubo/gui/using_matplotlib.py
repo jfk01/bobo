@@ -16,6 +16,27 @@ def imshow(im, title=None):
         plt.title(title)
     plt.draw()
 
+def tracks(im, bbox, bboxcolor='green', caption=None, captioncolor='red'):
+    plt.clf()
+    plt.imshow(im)
+    plt.autoscale(tight=True)
+    plt.axis('image')
+    plt.set_cmap('gray')
+    plt.hold(True)
+
+    for (bb, cap) in zip(bbox, caption):
+        # (x,y) bounding box is right and down, swap to right and up for plot
+        xmin = bb[0]
+        ymin = bb[1]
+        xmax = bb[0]+bb[2]
+        ymax = bb[1]+bb[3]
+        plt.axvspan(xmin, xmax, ymin=1-np.float32(ymax/im.shape[0]), ymax=1-np.float32(ymin/im.shape[0]), edgecolor='g', facecolor='white', linewidth=3, fill=True, alpha=0.5, label='test')  
+
+        if cap is not None:
+            plt.text(xmin, ymin, cap, bbox=dict(facecolor='white', edgecolor='g',alpha=1), fontsize=4)
+            
+    plt.draw()
+    
 def imbbox(im, xmin, xmax, ymin, ymax, bboxcaption=None):
     plt.clf()
     plt.imshow(im)
