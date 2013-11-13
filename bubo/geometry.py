@@ -34,3 +34,24 @@ def random_affine_imtransform(txy=((0,0),(0,0)), r=(0,0), sx=(1,1), sy=(1,1), kx
 def imtransform(im, A):
     # cv2.warpPerspective(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) -> dst
     return cv2.warpPerspective(im, A, im.shape)
+
+def frame_to_bbox(fr):
+    """ bbox = [ (xmin,ymin,width,height), ... ] """
+    return [ (x[0]-x[2]/2, x[1]-x[2]/2, x[0]+x[2]/2, x[1]+x[2]/2) for x in fr]
+
+def bbox_jaccard_overlap(bbox_ref, bbox_obs, threshold=0.5):
+    """jaccard similarity of bounding boxes is (area of intersection) / (area of union)"""
+    P_ref = [shapely.geometry.box(x[0], x[1], x[2], x[3], ccw=True) for x in bbox_obs]
+    P_obs = [shapely.geometry.box(x[0], x[1], x[2], x[3], ccw=True) for x in bbox_ref]
+    C = np.zeros( (fr_ref.shape[0], fr_obs.shape[0]) )
+    for (i,x) in enumerate(P_ref):
+        for (j,y) in enumerate(P_obs):
+            C[i,j] = x.intersection(y).area / x.union(y).area
+    return np.float32(C >= threshold)
+
+def frame_overlap(fr_ref, fr_obs, threshold=0.5):
+    return bbox_overlap(frame_to_bbox(fr_ref), frame_to_bbox(fr_obs), threshold)
+
+def point_in_image(pts, im):
+    P = shapely.geometry.box(0, 0, im.shape[0], im.shape[1], ccw=True) 
+    return [P.contains(x) for x in pts]

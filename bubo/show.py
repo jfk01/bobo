@@ -64,3 +64,6 @@ def sparseflow(im, flow):
 
 def disparity(disp, maxdisparity=None):
     return BACKEND.disparity(disp, maxdisparity)
+
+def impolygon(im, poly, color='green'):
+    return BACKEND.impolygon(im, poly, color)
