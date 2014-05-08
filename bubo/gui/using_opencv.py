@@ -82,12 +82,13 @@ def imshow(im, handle=None):
 def imbbox(im, xmin, xmax, ymin, ymax, bboxcaption=None):
     pass
 
-def rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):
+def rectangle(bbox, color='green', caption=None, filled=False, linewidth=1, flip=False):
     global WINDOWSTATE
     im = WINDOWSTATE['windows'][WINDOWSTATE['focus']][0]
     cv2.rectangle(im, (bbox[0], bbox[1]), (bbox[0]+bbox[2], bbox[1]+bbox[3]), cv2.cv.Scalar(color[0],color[1],color[2])), 
     WINDOWSTATE['windows'][WINDOWSTATE['focus']][0] = im
-    imshow(im)
+    if flip:
+        imshow(im)
 
 def ellipse(bbox, color='green', caption=None, filled=False, linewidth=1):
     pass
@@ -108,6 +109,8 @@ def _color(c):
             c = cv2.cv.Scalar(0,0,255)            
         elif c == 'blue':
             c = cv2.cv.Scalar(255,0,0)            
+        elif c == 'yellow':
+            c = cv2.cv.Scalar(0,255,255)            
         else:
             print 'undefined color %s' % c
             c = cv2.cv.Scalar(0,0,0)            
@@ -137,11 +140,21 @@ def frame(fr, im, color, caption):
         cv2.line(im, v[3], v[0], color=c, thickness=1, lineType=cv2.CV_AA)                                     
     _flip(im, figure('frame'))
 
-def tracks(im, bbox, bboxcolor, caption, captioncolor):
-    #if caption is not None:
-    #    cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]]) 
-
-    pass
+def tracks(im, bbox, bboxcolor='green', caption=None, captioncolor='red'):
+    im = _im2bgr(im)
+    if type(bboxcolor) not in (list, tuple):
+        bboxcolorlist = [_color(bboxcolor)]*len(bbox)
+    else:
+        bboxcolorlist = [_color(c) for c in bboxcolor]
+    if type(captioncolor) not in (list, tuple):
+        captioncolorlist = [_color(captioncolor)]*len(bbox)
+    else:
+        captioncolorlist = [_color(c) for c in captioncolor]
+    for (bb,bbcolor,cap,capcolor) in zip(bbox, bboxcolorlist, caption, captioncolorlist):
+        cv2.rectangle(im, (int(bb[0]), int(bb[1])), (int(bb[0])+int(bb[2]), int(bb[1])+int(bb[3])), color=bbcolor), 
+        if cap is not None:
+            cv2.putText(im, cap, (int(bb[0]),int(bb[1])), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.25, color=capcolor, thickness=1, lineType=cv2.CV_AA)
+    _flip(im, figure('tracks')) # update the display                
     
 def scatter(fr, im, color):
     im = _im2bgr(im)

@@ -33,7 +33,7 @@ def tracking(instream, framerate=None):
 
     # Update display
     for (im, anno) in instream(async=True):
-        print anno        
+        #print anno        
         if anno['imurl'] != imshown:
             screen.blit(img, (0,0))
             if framerate is not None:
