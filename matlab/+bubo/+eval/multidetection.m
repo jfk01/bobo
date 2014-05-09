@@ -1,8 +1,7 @@
-function [is] = isvalid(bb)
+function [det] = multidetection()
 %--------------------------------------------------------------------------
 %
 % Copyright (c) 2014 Jeffrey Byrne
 %
 %--------------------------------------------------------------------------
 
-is = (size(bb,2) >= 4) && (bubo.bbox.isxywh(bb));

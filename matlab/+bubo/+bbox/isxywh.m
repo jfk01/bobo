@@ -1,14 +1,13 @@
-function [bb_xywh] = corners2xywh(bb)
+function [is] = isxywh(bb)
 %--------------------------------------------------------------------------
 %
 % Copyright (c) 2014 Jeffrey Byrne
 %
 %--------------------------------------------------------------------------
 
-xmin = bb(:,1);
-ymin = bb(:,2);
-xmax = bb(:,3);
-ymax = bb(:,4);
 
-bb_xywh = [xmin ymin xmax-xmin ymax-ymin];
-
+if all((bb(:,3) > bb(:,1)) & (bb(:,4) > bb(:,2)))
+  is = false; % (xmin,ymin,xmax,ymax) corners format 
+else
+  is = true;
+end

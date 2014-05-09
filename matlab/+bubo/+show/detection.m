@@ -18,6 +18,7 @@ str_plotstyle = [{'b-'}, {'g-'}, {'r-'}, {'k-'}; {'b-.'}, {'g-.'}, {'r-.'}, {'k-
 %% Plots
 figure(1); clf; hold on;
 plot(det.recall, det.precision);
+axis([0 1 0 1]);
 grid on; xlabel 'Recall'; ylabel 'Precision'
 
 
