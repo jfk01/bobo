@@ -12,6 +12,7 @@ warning('off','MATLAB:dispatcher:nameConflict');
 
 %% Support paths
 addpath(pwd);
+addpath(fullfile(pwd, 'gui'));
 
 
 %% Unpack Dependencies

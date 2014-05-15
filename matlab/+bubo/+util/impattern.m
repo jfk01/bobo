@@ -19,6 +19,11 @@ switch(mode)
   case 'diamond'
     im = zeros(128,128); im(32:96,32:96) = 1;
     im = imrotate(im,45);
+  case 'playbutton'
+    im = zeros(128,128); im(32:96,32:96) = 1;
+    im = imrotate(im,45);
+    im(:,1:90)=0;
+    im = im(30:150,50:170);
   case 'rectangle'
     im = zeros(128,128); im(32:96,48:80) = 1;
   case 'bar'
