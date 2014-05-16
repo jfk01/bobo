@@ -64,6 +64,7 @@ global GUI;
 GUI.h_imagesc = [];
 GUI.bbox = NaN(GUI.endframe - GUI.startframe + 1, 4);
 GUI.is_occluded = zeros(GUI.endframe - GUI.startframe + 1, 1);
+GUI.was_moved = zeros(GUI.endframe - GUI.startframe + 1, 1);
 GUI.imrect = [];
 
 % Show image
@@ -104,14 +105,14 @@ set(GUI.handles.imslider, 'Value', GUI.currentframe);
 
 % display rectange
 if isempty(GUI.imrect) 
-  imrect_CreateFcn([100 100 100 200]);  % default position
+  imrect_CreateFcn([100 100 100 200]);  % create in default position
   GUI.bbox(GUI.currentframe,:) = getPosition(GUI.imrect);  
-  GUI.is_occluded(GUI.currentframe) = imrect_IsOccludedState();
-elseif any(isnan(GUI.bbox(GUI.currentframe,:)))
+  GUI.is_occluded(GUI.currentframe) = imrect_IsOccludedState();  
+elseif any(isnan(GUI.bbox(GUI.currentframe,:))) || (is_keyframe() && (GUI.was_moved(GUI.currentframe) == 0))
   GUI.bbox(GUI.currentframe,:) = getPosition(GUI.imrect);  % current position
   GUI.is_occluded(GUI.currentframe) = imrect_IsOccludedState();
 else
-  setPosition(GUI.imrect, GUI.bbox(GUI.currentframe,:));  % set stored position (triggers callback)
+  setPosition(GUI.imrect, GUI.bbox(GUI.currentframe,:));  % use stored position (triggers callback)
 end
 if GUI.is_occluded(GUI.currentframe)
   setColor(GUI.imrect, 'red');
@@ -194,14 +195,24 @@ else
 end
 
 
-% --- Rectangle interpolation
-function imrect_Interpolation(bbox)
-global GUI; 
-if mod(GUI.currentframe-1, GUI.skipframe) ~= 0
-  return;  % interpolation only on keyframes
+% --- Rectangle menu state
+function [is] = is_keyframe()
+global GUI;
+if mod(GUI.currentframe-1, GUI.skipframe) == 0
+  is = true;
+else
+  is = false;
 end
 
-% Linear interpolation from keyframes
+
+% --- Rectangle interpolation
+function imrect_Interpolation(bbox)
+global GUI;
+if ~is_keyframe()
+  return;
+end
+
+% Linear interpolation from keyframes only
 bb = bbox;
 k = GUI.currentframe;
 GUI.bbox(k,:) = bbox;
@@ -234,7 +245,8 @@ else
 end
 GUI.bbox(k,:) = bbox;
 
-
+% Mark moved by user 
+GUI.was_moved(GUI.currentframe) = 1;
 
 
 
