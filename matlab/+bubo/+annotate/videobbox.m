@@ -20,6 +20,11 @@ GUI.startframe = 1;
 GUI.currentframe = 1;
 GUI.endframe = length(imlist);
 GUI.skipframe = n_imskip;
+if exist(outfile, 'file')
+  mat = load(outfile);
+  GUI.bbox = mat.bbox;  % initialize 
+  GUI.is_occluded = mat.is_occluded;  % initialize 
+end
 gui_videobbox();  % ${BUBO}/matlab/gui
 
 

@@ -22,7 +22,7 @@ function varargout = gui_videobbox(varargin)
 
 % Edit the above text to modify the response to help gui_videobbox
 
-% Last Modified by GUIDE v2.5 15-May-2014 11:19:25
+% Last Modified by GUIDE v2.5 22-May-2014 09:48:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,9 +62,14 @@ guidata(hObject, handles);
 % Initialize bounding box
 global GUI;
 GUI.h_imagesc = [];
-GUI.bbox = NaN(GUI.endframe - GUI.startframe + 1, 4);
-GUI.is_occluded = zeros(GUI.endframe - GUI.startframe + 1, 1);
-GUI.was_moved = zeros(GUI.endframe - GUI.startframe + 1, 1);
+if ~isfield(GUI, 'bbox')
+  GUI.bbox = NaN(GUI.endframe - GUI.startframe + 1, 4);
+  GUI.was_moved = ones(GUI.endframe - GUI.startframe + 1, 1);
+end
+if ~isfield(GUI, 'is_occluded')
+  GUI.is_occluded = zeros(GUI.endframe - GUI.startframe + 1, 1);
+end
+
 GUI.imrect = [];
 
 % Show image
@@ -105,7 +110,11 @@ set(GUI.handles.imslider, 'Value', GUI.currentframe);
 
 % display rectange
 if isempty(GUI.imrect) 
-  imrect_CreateFcn([100 100 100 200]);  % create in default position
+  if any(isnan(GUI.bbox(GUI.currentframe,:)))
+    imrect_CreateFcn([100 100 100 200]);  % create in default position
+  else
+    imrect_CreateFcn(GUI.bbox(GUI.currentframe,:));  % create in default position
+  end
   GUI.bbox(GUI.currentframe,:) = getPosition(GUI.imrect);  
   GUI.is_occluded(GUI.currentframe) = imrect_IsOccludedState();  
 elseif any(isnan(GUI.bbox(GUI.currentframe,:))) || (is_keyframe() && (GUI.was_moved(GUI.currentframe) == 0))
@@ -114,6 +123,7 @@ elseif any(isnan(GUI.bbox(GUI.currentframe,:))) || (is_keyframe() && (GUI.was_mo
 else
   setPosition(GUI.imrect, GUI.bbox(GUI.currentframe,:));  % use stored position (triggers callback)
 end
+setPosition(GUI.imrect, GUI.bbox(GUI.currentframe,:));  % use stored position (triggers callback)
 if GUI.is_occluded(GUI.currentframe)
   setColor(GUI.imrect, 'red');
   set(GUI.imrect_occlusionmenu,'Checked', 'on');
@@ -249,4 +259,11 @@ GUI.bbox(k,:) = bbox;
 GUI.was_moved(GUI.currentframe) = 1;
 
 
-
+% --- Executes on key press with focus on imslider and none of its controls.
+function imslider_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to imslider (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
