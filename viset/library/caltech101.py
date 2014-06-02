@@ -1,5 +1,6 @@
 import os
 import csv
+import viset.cache
 from viset.cache import Cache
 
 URL = ('http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz')
@@ -9,10 +10,15 @@ VISET = 'caltech101'
 def download(outdir=None):
     return Cache(outdir).get(URL, sha1=SHA1, cacheid=VISET)
     
-def export(outfile='caltech101.csv', outdir=None, do_json=False):
+def export(outfile=None, outdir=None, do_json=False):
     # Cache dataset
     pkgdir = download(outdir);
 
+    # Output file
+    cache = viset.cache.Cache(outdir)    
+    if outfile is None:
+        outfile = cache.abspath('caltech101.csv')    
+    
     # Return json or CSV file containing dataset description    
     categorydir = os.path.join(pkgdir, '101_ObjectCategories')          
 
