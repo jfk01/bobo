@@ -5,7 +5,7 @@ from os import path
 import hashlib
 import numpy
 import urlparse
-from viset.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring
+from viset.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir
 import viset.download
 import pylab
 import string
@@ -35,9 +35,12 @@ class Cache():
     _cachesize = None  # async result
     _prettyhash = True
     
-    def __init__(self, cacheroot=_cacheroot, maxsize=10E9, verbose=True, strategy='lru', refetch=False):
+    def __init__(self, cacheroot=_cacheroot, maxsize=10E9, verbose=True, strategy='lru', refetch=False, subdir=None):
         if cacheroot is not None:
             self._cacheroot = cacheroot
+        if subdir is not None:
+            self._cacheroot = os.path.join(self._cacheroot, subdir)
+        remkdir(self._cacheroot)            
         self._maxsize = maxsize
         self._verbose = verbose
         self._strategy = strategy
@@ -242,23 +245,20 @@ class Cache():
     def ls(self):
         print os.listdir(self._cacheroot)
 
-    def unpack(self, pkgkey, dirkey=None, sha1=None, cleanup=False):
+    def unpack(self, pkgkey, unpackto=None, sha1=None, cleanup=False):
         """Extract archive file to unpackdir directory, delete archive file and return archive directory"""
         if not self.iscached(pkgkey):
             raise CacheError('[viset.cache][ERROR]: Key not found "%s" ' % pkgkey)
         filename = self.abspath(pkgkey)
         if isarchive(filename):
-            if dirkey is None:
-                # unpack directory is the filename without the .ext 
-                (unpackdir, ext) = viset.util.splitextension(filename)
+            # unpack directory is the same directory as filename
+            if unpackto is None:
+                unpackdir = self._cacheroot
             else:
-                # Use the provided directory in the cache
-                unpackdir = self.abspath(dirkey)
+                unpackdir = self.abspath(unpackto)
             if not path.exists(unpackdir):
                 os.makedirs(unpackdir)
-                viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)
-            else:
-                quietprint('[viset.cache][HIT]: "%s" unpacked to "%s"' % (pkgkey, dirkey), self._verbose)                
+            viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)                
             if cleanup:
                 quietprint('[viset.cache]: Deleting archive "%s" ' % (pkgkey), self._verbose)                                
                 os.remove(filename)

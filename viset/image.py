@@ -1,7 +1,7 @@
 import csv
 from viset.cache import CachedObject, Cache
 from viset.show import imshow
-from viset.util import isnumpy
+from viset.util import isnumpy, quietprint
 
 
 class ImageCategory():
@@ -29,7 +29,12 @@ class ImageCategory():
         return self.image
             
     def show(self):
-        imshow(self.load(), title=self.category)        
+        try:
+            imshow(self.load(), title=self.category)
+        except KeyboardInterrupt:
+            raise
+        except:
+            quietprint('[viset.image][WARNING]: download failed', True);
 
     
 class ImageDetection():
@@ -39,21 +44,22 @@ class ImageDetection():
 class ImageCategoryStream(object):
     """A stream of labeled imagery"""
     _csvfile = None
+    _cache = None
     
     def __init__(self, csvfile, cache=Cache()):        
-        _csvfile = csvfile
-        _cache = cache
-        self.reader = csv.reader(open(_csvfile, 'rb'), delimiter=' ', quotechar='|')
+        self._csvfile = csvfile
+        self._cache = cache
+        self.reader = csv.reader(open(self._csvfile, 'rb'), delimiter=' ', quotechar='|')
 
     def __iter__(self):
         return self
 
     def next(self):
         row = self.reader.next()
-        return (ImageCategory(row[0], category=row[1]))
+        return (ImageCategory(row[0], category=row[1], cache=self._cache))
 
     def parse(self, row):
-        return ImageCategory(row[0], category=row[1])
+        return ImageCategory(row[0], category=row[1], cache=self._cache)
 
         
 class DetectionStream(object):
