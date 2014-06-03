@@ -1,10 +1,15 @@
 MacOSX
 ------
 
+Install Spark: http://spark.apache.org/downloads.html
+
 sh> sudo port install opencv +python2.7
 sh> sudo pip install pyzmq
 sh> sudo pip install scikit-learn
 sh> sudo port install py27-scipy
+
+sh> IPYTHON=1 MASTER=local[4] ./bin/pyspark
+
 
 
  
