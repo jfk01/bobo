@@ -44,6 +44,9 @@ def isimg(path):
 def isfile(path):
     return os.path.isfile(str(path))
 
+def isstring(obj):
+    return (str(type(obj)) in ['<type \'str\'>'])
+
 def isviset(obj):
     return (str(type(obj)) in ['<class \'viset.types.Image\'>', '<class \'viset.types.Data\'>'])
 
@@ -75,7 +78,9 @@ def quietprint(mystr, is_verbose):
     if is_verbose:
         print mystr
 
-
+def isnumpy(obj):
+    return ('numpy' in str(type(obj)))
+        
 def dict2querystring(d):
     qs_dict = {}
     for (k,v) in d.iteritems():

@@ -20,9 +20,9 @@ def download(outdir=None, csvfile=None):
         
 def export(outfile=None, outdir=None):
     # Fetch textfile for construction
-    cache = viset.cache.Cache(outdir);
     if outdir is None:
-        outdir = cache.root()
+        outdir = os.path.fullfile(viset.cache.Cache().root(), VISET)
+    cache = viset.cache.Cache(outdir);
     if cache.iscached(URL) is False:
         viset.download.download_and_extract(URL, outdir, sha1=SHA1)
     txtfile = os.path.join(cache.root(), TXTFILE)

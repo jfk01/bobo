@@ -27,8 +27,7 @@ def generate_sha1(filepath):
 def verify_sha1(filename, sha1):
     data = open(filename, 'rb').read()
     if sha1 != hashlib.sha1(data).hexdigest():
-        raise IOError("File '%s': invalid SHA-1 hash! You may want to delete "
-                      "this corrupted file..." % filename)
+        raise IOError("[viset.cache]: File '%s': invalid SHA-1 hash!  This file must be deleted manually." % filename)
 
 def verify_md5(filename, md5):
     data = open(filename, 'rb').read()
@@ -124,4 +123,8 @@ def cache_and_extract(url, output_dirname, sha1=None, verbose=True):
         download_and_extract(url, output_dirname, sha1, verbose)
         
 
+
+
+        
+        
     

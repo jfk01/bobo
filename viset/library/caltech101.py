@@ -3,7 +3,7 @@ import csv
 import viset.cache
 from viset.cache import Cache
 
-URL = ('http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz')
+URL = 'http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz'
 SHA1 = 'b8ca4fe15bcd0921dfda882bd6052807e63b4c96'
 VISET = 'caltech101'
 
@@ -11,13 +11,14 @@ def download(outdir=None):
     return Cache(outdir).get(URL, sha1=SHA1, cacheid=VISET)
     
 def export(outfile=None, outdir=None, do_json=False):
-    # Cache dataset
-    pkgdir = download(outdir);
+    # Unpack dataset
+    cache = viset.cache.Cache(outdir)
+    key = cache.get(URL)
+    pkgdir = cache.unpack(key, VISET, sha1=SHA1, cleanup=False)
 
     # Output file
-    cache = viset.cache.Cache(outdir)    
     if outfile is None:
-        outfile = cache.abspath('caltech101.csv')    
+        outfile = cache.abspath('%s.csv' % VISET)    
     
     # Return json or CSV file containing dataset description    
     categorydir = os.path.join(pkgdir, '101_ObjectCategories')          
@@ -28,7 +29,7 @@ def export(outfile=None, outdir=None, do_json=False):
         for (idx_category, category) in enumerate(os.listdir(categorydir)):
             imdir = os.path.join(categorydir, category)        
             for im in os.listdir(imdir):
-                f.writerow([os.path.join(categorydir, category, im), category, str(idx_category)]);
+                f.writerow([cache.key(os.path.join(categorydir, category, im)), category]);
 
     # Return CSV file
     return outfile
