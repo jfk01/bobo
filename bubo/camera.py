@@ -50,7 +50,7 @@ class Webcam(Camera):
         return self
 
     def _read(self):
-        im = self.CAM.get()
+        #im = self.CAM.get()
         return self.CAM.get() # HACK: for slow processing to get most recent image
         
     def next(self):    

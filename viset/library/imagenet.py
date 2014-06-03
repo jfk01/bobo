@@ -1,39 +1,48 @@
-import tables
 import os
-from os import path
 import viset.download
-from viset.dataset import CategorizationViset
+import viset.cache
+from viset.stream import Recognition
+import csv
+from viset.show import imshow
 
-class ImageNet():
-    def export(self, verbose=False):            
-        # Create empty database
-        db = CategorizationViset(self._dbname, mode='w', verbose=verbose)
+URL = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
+SHA1 = 'f5fd118232b871727fe333778be81df6c6fec372'
+TXTFILE = 'fall11_urls.txt'
+VISET = 'imagenet_fall2011'
 
-        # Fetch textfile for construction
-        pkgdir = db.cache.get(self.URL, sha1=self.SHA1)        
-        txtfile = path.join(pkgdir,self.TXTFILE)
+def download(outdir=None, csvfile=None):
+    if csvfile is None:
+        csvfile = export(csvfile, outdir)
+    for (idx, (im, annotation)) in enumerate(Recognition(csvfile)):
+        filename = os.path.join(VISET, 'im_%09d.jpg' % idx)
+        print filename
+        #imshow(im.get(cacheid=filename))
         
-        # Write images and annotations
-        imstream = db.image        
-        annostream = db.annotation.categorization
-        for line in open(txtfile,'r'):
+def export(outfile=None, outdir=None):
+    # Fetch textfile for construction
+    cache = viset.cache.Cache(outdir);
+    if outdir is None:
+        outdir = cache.root()
+    if cache.iscached(URL) is False:
+        viset.download.download_and_extract(URL, outdir, sha1=SHA1)
+    txtfile = os.path.join(cache.root(), TXTFILE)
+        
+    # Write images and annotations
+    if outfile is None:
+        outfile = os.path.join(cache.root(), 'imagenet_fall11.csv')
+    with open(outfile, 'wb') as csvfile:            
+        f = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)        
+        for (k, line) in enumerate(open(txtfile,'r')):
             try:
                 (name, url) = line.rstrip().split('\t')
                 (synset, suffix) = name.rstrip().split('_')      
-                idx_image = imstream.write(url)                             
-                annostream.write(str(synset), int(synset[1:]), idx_image)                
+                f.writerow([url, str(synset)])
             except:
                 print '[viset.imagenet]: Warning: Ignoring malformed line "' + line[0:64] + ' ..."'
+
+            if (k % 10000) == 0:
+                print '[viset.library.imagenet][%d]: exporting "%s"' % (k, url)
                 
-        # Cleanup
-        db.close()
-        return db.abspath()
+    # Done!
+    return outfile
 
-
-class ImageNetFall2011(ImageNet):
-  URL = 'http://www.image-net.org/archive/imagenet_fall11_urls.tgz'
-  SHA1 = 'f5fd118232b871727fe333778be81df6c6fec372'
-  TXTFILE = 'fall11_urls.txt'
-  _dbname = 'imagenet_fall2011'
-
-  

@@ -10,6 +10,16 @@ import time
 from time import gmtime, strftime, localtime
 import sys
 import csv
+import hashlib
+
+def sha1(filename):
+    sha1 = hashlib.sha1()
+    f = open(filepath, 'rb')
+    try:
+        sha1.update(f.read())
+    finally:
+        f.close()
+    return sha1.hexdigest()
 
 
 def ndmax(A):

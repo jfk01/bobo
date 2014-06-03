@@ -285,7 +285,9 @@ class Cache():
     def iscached(self, url):
         """Return true if a url is in the cache"""
         return path.isfile(self.abspath(self.cacheid(url))) or path.isdir(self.abspath(self.cacheid(url))) or path.isfile(self.abspath(url)) or path.isdir(self.abspath(url))
-            
+
+    def root(self):
+        return(self._cacheroot)
             
 def quietprint(mystr, is_verbose):
     if is_verbose:
@@ -323,9 +325,9 @@ class CachedObject(object):
     def url(self):
         return self._url
     
-    def get(self):
+    def get(self, cacheid=None):
         if self._obj is None:
-            self._obj = self._cache.get(self._url, sha1=self._sha1, async=False)
+            self._obj = self._cache.get(self._url, sha1=self._sha1, async=False, cacheid=cacheid)
         return self._obj
         
     def __repr__(self):
