@@ -40,7 +40,9 @@ def download(url, output_filename, sha1=None, verbose=True, md5=None, timeout=No
     """Downloads file at `url` and write it in `output_dirname`"""
 
     # socket.setdefaulttimeout(10)  # do not set globally
-        
+    if timeout == None:
+        timeout = 5
+      
     page = urlopen(url, timeout=timeout)
     page_info = page.info()
 

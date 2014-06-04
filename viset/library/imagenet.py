@@ -3,6 +3,7 @@ import csv
 import viset.cache
 from viset.util import remkdir
 from viset.image import ImageCategoryStream
+from nltk.corpus import wordnet
 
 URL = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
 SHA1 = 'f5fd118232b871727fe333778be81df6c6fec372'
@@ -10,6 +11,11 @@ TXTFILE = 'fall11_urls.txt'
 VISET = 'imagenet_fall2011'
 
 cache = viset.cache.Cache(subdir=VISET)
+
+def category(wnid):
+    pos = wnid[0]
+    synset = wordnet._synset_from_pos_and_offset(pos, int(str(wnid[1:]).lstrip('0')))  # assume noun
+    return str(synset.lemmas[0].name).replace(" ","_")
 
 def download(csvfile):
     for imcategory in ImageCategoryStream(csvfile, cache=cache):
@@ -29,7 +35,7 @@ def export(synset=None):
             try:
                 (name, url) = line.rstrip().split('\t')
                 (synset, suffix) = name.rstrip().split('_')      
-                f.writerow([url, str(synset)])
+                f.writerow([url, category(synset)])
             except KeyboardInterrupt:
                 raise
             except:
