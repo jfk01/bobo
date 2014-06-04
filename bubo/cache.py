@@ -5,28 +5,14 @@ from os import path
 import hashlib
 import numpy
 import urlparse
-from viset.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir
+from bubo.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir
 import viset.download
 import pylab
 import string
 import shutil
 import h5py
 
-
-# a cache takes uri as input and stores the results in a local cache defined by a cache root
-# pass around relative paths to cache which can be dynamically redefined by an absolute path
-# a get operation can be performed on a uri which caches and returns a cache id
-# if a get is performed on a cacheid then this file is returned directly
-# an object can be put manually into the cache (if we have a known cacheid)
-
-
-
 class Cache():
-    _cacheroot = os.environ.get('VISYM_CACHE')
-    if _cacheroot is None:
-        _cacheroot = path.join(os.environ['HOME'],'.visym','cache')
-    if not path.exists(_cacheroot):
-        os.makedirs(_cacheroot)
     _maxsize = None
     _verbose = None
     _strategy = None
@@ -34,18 +20,23 @@ class Cache():
     _free_ctr = _free_maxctr
     _cachesize = None  # async result
     _prettyhash = True
+    _cacheroot = None
     
-    def __init__(self, cacheroot=_cacheroot, maxsize=10E9, verbose=True, strategy='lru', refetch=False, subdir=None):
+    def __init__(self, cacheroot=None, maxsize=10E9, verbose=True, strategy='lru', refetch=False, subdir=None):
         if cacheroot is not None:
-            self._cacheroot = cacheroot
+            self._setroot(cacheroot)
+        elif os.environ.get('VISYM_CACHE_ROOT') is not None:
+            self._setroot(os.environ.get('VISYM_CACHE_ROOT'))
+        else:
+            self._setroot(path.join(os.environ['HOME'],'.visym','cache'))
         if subdir is not None:
-            self._cacheroot = os.path.join(self._cacheroot, subdir)
-        remkdir(self._cacheroot)            
+            self._setroot(os.path.join(self.root(), subdir))
         self._maxsize = maxsize
         self._verbose = verbose
         self._strategy = strategy
         self._refetch = refetch
-            
+        quietprint('[viset.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
+        
     def __len__(self):
         if self._cachesize is not None:
             return self._cachesize.get()
@@ -53,11 +44,15 @@ class Cache():
             return self.size()
         
     def __repr__(self):
-        return str('<viset.cache: cachedir=' + str(self._cacheroot) + '\'>')
+        return str('<viset.cache: cachedir=' + str(self.root()) + '\'>')
     
     def __getitem__(self, uri):
         return self.get(uri)
-                        
+
+    def _setroot(self, path):
+        self._cacheroot = path
+        remkdir(self._cacheroot)
+            
     def _download(self, url, timeout=None, sha1=None):        
         """Download url and store downloaded file in cache root, returning absolute filename"""
         #self._free()  # garbage collection time?        
@@ -95,7 +90,7 @@ class Cache():
                 if self._cachesize.get() > self._maxsize:
                     print '[viset.cache][WARNING]: cachesize is larger than maximum.  Clean resources!'
             quietprint('[viset.cache]: spawning cache garbage collection process', self._verbose)
-            self._cachesize = Pool(1).apply_async(self.size(), self._cacheroot)
+            self._cachesize = Pool(1).apply_async(self.size(), self.root())
             self._free_ctr = self._free_maxctr
         self._free_ctr -= 1
 
@@ -178,19 +173,19 @@ class Cache():
             
     def delete(self):
         """Delete entire cache"""
-        quietprint('[viset.cache]: Deleting all cached data in "' + self._cacheroot + '"', self._verbose)
-        shutil.rmtree(self._cacheroot)
-        os.makedirs(self._cacheroot)        
+        quietprint('[viset.cache]: Deleting all cached data in "' + self.root() + '"', self._verbose)
+        shutil.rmtree(self.root())
+        os.makedirs(self.root())        
 
     def clean(self):
         """Delete entire cache"""
         self.delete()
 
-    def size(self, source=_cacheroot):
+    def size(self):
         """Recursively compute the size in bytes of a cache directory: http://snipplr.com/view/47686/"""
-        total_size = os.path.getsize(source)
-        for item in os.listdir(source):
-            itempath = os.path.join(source, item)
+        total_size = os.path.getsize(self.root())
+        for item in os.listdir(self.root()):
+            itempath = os.path.join(self.root(), item)
             if os.path.isfile(itempath):
                 total_size += os.path.getsize(itempath)
             elif os.path.isdir(itempath):
@@ -217,7 +212,7 @@ class Cache():
             key = str(urlhash) + str(ext)
         elif os.path.isfile(obj):
             # within cache?
-            filebase = obj.split(self._cacheroot,1)
+            filebase = obj.split(self.root(),1)
             if len(filebase) == 2:
                 # key is subpath within cache
                 key = filebase[1][1:]
@@ -237,13 +232,13 @@ class Cache():
         
     def abspath(self, key):
         """The absolute file path for a cache key"""
-        return os.path.join(self._cacheroot, key)
+        return os.path.join(self.root(), key)
         
     def root(self):
-        return(self._cacheroot)            
+        return(self._cacheroot) 
 
     def ls(self):
-        print os.listdir(self._cacheroot)
+        print os.listdir(self.root())
 
     def unpack(self, pkgkey, unpackto=None, sha1=None, cleanup=False):
         """Extract archive file to unpackdir directory, delete archive file and return archive directory"""
@@ -253,7 +248,7 @@ class Cache():
         if isarchive(filename):
             # unpack directory is the same directory as filename
             if unpackto is None:
-                unpackdir = self._cacheroot
+                unpackdir = self.root()
             else:
                 unpackdir = self.abspath(unpackto)
             if not path.exists(unpackdir):

@@ -12,6 +12,14 @@ import sys
 import csv
 import hashlib
 
+global BUBO_VERBOSITY
+BUBO_VERBOSITY = 3
+
+def setverbosity(v):
+    global BUBO_VERBOSITY
+    BUBO_VERBOSITY = v
+    
+
 def sha1(filename):
     sha1 = hashlib.sha1()
     f = open(filepath, 'rb')
@@ -27,6 +35,15 @@ def ndmax(A):
 
 def ndmin(A):
     return np.unravel_index(A.argmin(), A.shape)
+
+def ishdf5(path):
+    # tables.is_hdf5_file(path)
+    # tables.is_pytables_file(path)
+    (filename, ext) = os.path.splitext(path)
+    if (ext is not None) and (len(ext) > 0) and (ext.lower() in ['.h5']):
+        return True
+    else:
+        return False
 
 
 def uniform_random_in_range(rng=(0,1)):
@@ -106,6 +123,10 @@ def isimg(path):
   else:
     return False
 
+def isnumpy(obj):
+    return ('numpy' in str(type(obj)))
+        
+
 def istextfile(path):
   (filename, ext) = os.path.splitext(path)
   if ext.lower() in ['.txt'] and (filename[0] != '.'):
@@ -144,6 +165,14 @@ def bgr2rgb(im_bgr):
     cv.CvtColor(im_bgr, im_rgb, cv.CV_BGR2RGB)
     return im_rgb
 
+def isarchive(filename):
+    (filebase, ext) = splitextension(filename)
+    if (ext is not None) and (len(ext) > 0) and (ext.lower() in ['.egg','.jar','.tar','.tar.bz2','.tar.gz','.tgz','.tz2','.zip']):
+        return True
+    else:
+        return False
+
+
 def mkdir(newdir):
     if not os.path.isdir(newdir):
         os.mkdir(newdir)
@@ -161,6 +190,11 @@ def imread(imfile):
 def imresize(im, scale):
     return cv2.resize(im, (0,0), fx=scale, fy=scale, interpolation=cv2.cv.CV_INTER_LINEAR) 
 
+def touch(filename, mystr=''):
+    f = open(filename, 'w')
+    f.write(str(mystr))
+    f.close()
+
 class Stopwatch(object):    
     """Return elapsed processor time in seconds between calls to enter and exit"""
     def __enter__(self):
@@ -171,7 +205,17 @@ class Stopwatch(object):
         self.end = time.clock()
         self.elapsed = self.end - self.start
         
-    
+def quietprint(mystr, verbosity):
+    """Unified entry point for logging and console messages"""
+    if  (verbosity <= BUBO_VERBOSITY):  # GLOBAL!
+        print mystr
+
+def isfile(path):
+    return os.path.isfile(str(path))
+
+def isstring(obj):
+    return (str(type(obj)) in ['<type \'str\'>'])
+        
 def timestamp():
     """Return date and time string in form DDMMMYY_HHMMSS"""
     return string.upper(strftime("%d%b%y_%I%M%S%p", localtime()))
@@ -184,3 +228,17 @@ def print_update(status):
     status = status + chr(8) * (len(status) + 1)
     print status, # space instead of newline
     sys.stdout.flush()    
+
+def remkdir(path):
+    if os.path.isdir(path) is False:
+        os.makedirs(path)
+    
+def splitextension(filename):
+    (head, tail) = os.path.split(filename)
+    try:
+        (base, ext) = string.split(tail,'.',1)  # for .tar.gz    
+        ext = '.'+ext
+    except:
+        base = tail
+        ext = None
+    return (os.path.join(head, base), ext) # for consistency with splitext

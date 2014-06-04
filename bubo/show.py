@@ -1,6 +1,6 @@
 import importlib
 
-BACKEND = importlib.import_module('bubo.gui.using_opencv')
+BACKEND = importlib.import_module('bubo.gui.using_matplotlib')
 
 def backend(using='pygame'):
     global BACKEND

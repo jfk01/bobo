@@ -1,10 +1,20 @@
+import sys
+from viset.image import ImageCategory
+from viset.library import imagenet
+import viset.cache
+from pyspark import SparkContext
 
 
-# this file leverages spark to download a large dataset by distributing the download tasks over a large number of workers
+def imagenet_fall2011(outdir=None):
+    #sc = SparkContext("local", appName=imagenet.VISET)
+    imcache = viset.cache.Cache(cacheroot=outdir, subdir=imagenet.VISET)
+    #csvfile = imagenet.export(cache=imcache)
 
-def imagenet():
-
-    # export csv file to cache
-    # download in parallel using this csv file
+    csvfile = '/Volumes/JEBYRNE/visym/cache/imagenet_fall2011/imagenet_fall2011.csv'
     
-    pass
+    lines = sc.textFile(csvfile, 4)
+            
+    #imagenet.download(csvfile, imcache)
+
+    lines.foreach(lambda x: ImageCategory(cache=imcache).parse(x).load())
+    

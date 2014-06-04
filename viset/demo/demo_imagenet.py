@@ -1,8 +1,9 @@
 from viset.library import imagenet
-from viset.image import ImageCategoryStream
 
 def main():
-    imagenet.download(imagenet.export())
+    csvfile = '/Volumes/JEBYRNE/visym/cache/imagenet_fall2011/imagenet_fall2011.csv'
+    #imagenet.download(imagenet.export())
+    imagenet.download(csvfile)
 
 if __name__ == '__main__':
     main()

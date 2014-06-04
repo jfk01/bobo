@@ -1,8 +1,8 @@
 from viset.library import caltech101
-from viset.image import ImageCategoryStream
+from bubo.image import ImageCategoryStream
 
 def main():
-    for imcategory in ImageCategoryStream(caltech101.export()):
+    for imcategory in ImageCategoryStream(caltech101.export(), cache=caltech101.cache()):
         imcategory.show()
 
 if __name__ == '__main__':

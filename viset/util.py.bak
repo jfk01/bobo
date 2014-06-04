@@ -5,7 +5,7 @@ import os.path
 from os import path
 import code
 import inspect
-import IPython
+#import IPython
 import pdb
 import datetime
 from time import gmtime, strftime, localtime, clock
@@ -20,7 +20,7 @@ def isurl(path):
 
 def remkdir(path):
     if os.path.isdir(path) is False:
-        os.mkdir(path)
+        os.makedirs(path)
     
 
 def tolist(x):
