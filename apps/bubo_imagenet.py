@@ -1,13 +1,13 @@
-import sys
-from bubo.image import ImageCategory
 from viset.library import imagenet
-import bubo.cache
 from pyspark import SparkContext
 
 if 'sc' not in locals():
-    sc = SparkContext("local[4]", appName=imagenet.VISET)
-imcache = imagenet.cache()
-#csvfile = imagenet.export(cache=imcache)
-csvfile = '/Users/jebyrne/.visym/cache/imagenet_fall2011/imagenet_fall2011.csv'
-sc.textFile(csvfile, 4).foreach(lambda x: ImageCategory(cache=imcache).parse(x).load())
-    
+    sc = SparkContext("local[8]", appName=imagenet.VISET)
+
+csvfile = imagenet.export()
+imstream = imagenet.stream()
+sc.textFile(csvfile).foreach(lambda x: imstream[x].load())
+
+
+# sc.textFile(imagenet.export()).filter(lambda x: imstream[x].iscategory('woolly_bear')).count()
+

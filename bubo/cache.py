@@ -35,7 +35,7 @@ class Cache():
         self._verbose = verbose
         self._strategy = strategy
         self._refetch = refetch
-        quietprint('[viset.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
+        quietprint('[bubo.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
         
     def __len__(self):
         if self._cachesize is not None:
@@ -44,7 +44,7 @@ class Cache():
             return self.size()
         
     def __repr__(self):
-        return str('<viset.cache: cachedir=' + str(self.root()) + '\'>')
+        return str('<bubo.cache: cachedir=' + str(self.root()) + '\'>')
     
     def __getitem__(self, uri):
         return self.get(uri)
@@ -88,8 +88,8 @@ class Cache():
         if self._free_ctr == 0:
             if self._cachesize is not None:
                 if self._cachesize.get() > self._maxsize:
-                    print '[viset.cache][WARNING]: cachesize is larger than maximum.  Clean resources!'
-            quietprint('[viset.cache]: spawning cache garbage collection process', self._verbose)
+                    print '[bubo.cache][WARNING]: cachesize is larger than maximum.  Clean resources!'
+            quietprint('[bubo.cache]: spawning cache garbage collection process', self._verbose)
             self._cachesize = Pool(1).apply_async(self.size(), self.root())
             self._free_ctr = self._free_maxctr
         self._free_ctr -= 1
@@ -103,24 +103,24 @@ class Cache():
         if key is None:
             key = self.key(obj)        
         if self.iscached(key):
-            raise CacheError('[viset.cache][Error]: Key collision! Existing object in cache with key "%s"' % key)
+            raise CacheError('[bubo.cache][Error]: Key collision! Existing object in cache with key "%s"' % key)
             
         # Numpy object - export to file in cache with provided key
         if isnumpy(obj):
-            quietprint('[viset.cache][PUT]: Exporting numpy object to cache with key "' + key + '"', self._verbose)                                                                             
+            quietprint('[bubo.cache][PUT]: Exporting numpy object to cache with key "' + key + '"', self._verbose)                                                                             
             f = h5py.File(self.abspath(key), 'a')
             f[key] = obj
             f.close()
 
         # URL - download and save to cache with provided key
         elif isurl(obj):
-            quietprint('[viset.cache][PUT]: "%s" key "%s"' % (obj, key), self._verbose)                                                                                             
+            quietprint('[bubo.cache][PUT]: "%s" key "%s"' % (obj, key), self._verbose)                                                                                             
             filename = self._download(obj, timeout=timeout, sha1=sha1)
             shutil.move(filename, self.abspath(key))
             
         # Unsupported type!
         else:
-            raise CacheError('[viset.cache][ERROR]: Unsupported object type for PUT')
+            raise CacheError('[bubo.cache][ERROR]: Unsupported object type for PUT')
             
         # Return cache key 
         return key        
@@ -130,14 +130,14 @@ class Cache():
         """Get the value associated with a key from the cache and return object""" 
         if self.iscached(uri) and self._iskey(uri):
             # URI is a cache key, return absolute filename in cache 
-            quietprint('[viset.cache][HIT]: key "%s" ' % (uri), True)      
+            quietprint('[bubo.cache][HIT]: key "%s" ' % (uri), True)      
             filename = self.abspath(uri)                
         elif self.iscached(uri):
             # Convert URI to cache key, return absolute filename in cache
-            quietprint('[viset.cache][HIT]: "%s" key "%s" ' % (uri, self.key(uri)), True)
+            quietprint('[bubo.cache][HIT]: "%s" key "%s" ' % (uri, self.key(uri)), True)
             filename = self.abspath(self.key(uri))  
         else:
-            quietprint('[viset.cache][MISS]: downloading "%s"... ' % (uri), True)  
+            quietprint('[bubo.cache][MISS]: downloading "%s"... ' % (uri), True)  
             self.discard(uri)
             filename = self.abspath(self.put(uri))
 
@@ -147,16 +147,16 @@ class Cache():
     def discard(self, uri):
         """Delete single url from cache"""
         if self.iscached(uri):
-            quietprint('[viset.cache]: Removing key "%s" ' % (uri), self._verbose)            
+            quietprint('[bubo.cache]: Removing key "%s" ' % (uri), self._verbose)            
             os.remove(self.abspath(uri))
         elif self.iscached(uri):
-            quietprint('[viset.cache]: Removing cached URI "%s" key "%s" ' % (uri, self.key(uri)), self._verbose)
+            quietprint('[bubo.cache]: Removing cached URI "%s" key "%s" ' % (uri, self.key(uri)), self._verbose)
             os.remove(self.abspath(self.key(uri)))
         elif os.path.isdir(self.abspath(uri)):
-            quietprint('[viset.cache]: Removing cached directory "%s" ' % (uri), self._verbose)
+            quietprint('[bubo.cache]: Removing cached directory "%s" ' % (uri), self._verbose)
             shutil.rmtree(self.abspath(self.cacheid(url)))
         else:
-            #quietprint('[viset.cache][WARNING]: Key not found "%s" ' % (self.key(uri)), self._verbose)            
+            #quietprint('[bubo.cache][WARNING]: Key not found "%s" ' % (self.key(uri)), self._verbose)            
             pass
 
     def load(self, uri):
@@ -167,13 +167,13 @@ class Cache():
             f = h5py.File(filename, 'r')
             obj = f[self.key(filename)].value  # FIXME: lazy evaluation?              
         else:
-            raise CacheError('[viset.cache][ERROR]: unsupported object type for loading key "%s" ' % self.key(uri))
+            raise CacheError('[bubo.cache][ERROR]: unsupported object type for loading key "%s" ' % self.key(uri))
         return obj
         
             
     def delete(self):
         """Delete entire cache"""
-        quietprint('[viset.cache]: Deleting all cached data in "' + self.root() + '"', self._verbose)
+        quietprint('[bubo.cache]: Deleting all cached data in "' + self.root() + '"', self._verbose)
         shutil.rmtree(self.root())
         os.makedirs(self.root())        
 
@@ -227,7 +227,7 @@ class Cache():
         elif isstring(obj):
             key = obj   # Use arbitrary string if not file or url
         else:
-            raise CacheError('[viset.cache][ERROR]: Unsupported object for constructing key')
+            raise CacheError('[bubo.cache][ERROR]: Unsupported object for constructing key')
         return key
         
     def abspath(self, key):
@@ -243,7 +243,7 @@ class Cache():
     def unpack(self, pkgkey, unpackto=None, sha1=None, cleanup=False):
         """Extract archive file to unpackdir directory, delete archive file and return archive directory"""
         if not self.iscached(pkgkey):
-            raise CacheError('[viset.cache][ERROR]: Key not found "%s" ' % pkgkey)
+            raise CacheError('[bubo.cache][ERROR]: Key not found "%s" ' % pkgkey)
         filename = self.abspath(pkgkey)
         if isarchive(filename):
             # unpack directory is the same directory as filename
@@ -255,11 +255,11 @@ class Cache():
                 os.makedirs(unpackdir)
             viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)                
             if cleanup:
-                quietprint('[viset.cache]: Deleting archive "%s" ' % (pkgkey), self._verbose)                                
+                quietprint('[bubo.cache]: Deleting archive "%s" ' % (pkgkey), self._verbose)                                
                 os.remove(filename)
             return unpackdir
         else:
-            raise CacheError('[viset.cache][ERROR]: Key not archive "%s" ' % pkgkey)            
+            raise CacheError('[bubo.cache][ERROR]: Key not archive "%s" ' % pkgkey)            
 
 class CacheError(Exception):
     pass
@@ -284,7 +284,7 @@ class CachedObject(object):
         return self.obj
         
     def __repr__(self):
-        return str('<viset.cache: obj=' + str(type(self.obj)) + ', cached=' + str(self._cache.iscached(self.uri)) + ', key=\'' + str(self._cache.key(self.uri)) + '\'>')
+        return str('<bubo.cache: obj=' + str(type(self.obj)) + ', cached=' + str(self._cache.iscached(self.uri)) + ', key=\'' + str(self._cache.key(self.uri)) + '\'>')
 
     
     

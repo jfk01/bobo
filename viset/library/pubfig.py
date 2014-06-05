@@ -16,17 +16,11 @@ def load(csvfile=None):
     """Return interface objects for this dataset"""
     if csvfile is None:
         csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
-
-    # Return ImageCategory objects
-    imstream = ImageCategoryStream(csvfile, cache=cache)
-    return imstream
+    if not os.path.isfile(csvfile):
+        csvfile = export()
     
-
-
-def download(synset=None, cache=None):
-    """Download all data (URL datasets)"""
-    pass
-
+    # Return ImageCategory objects
+    return ImageCategoryStream(csvfile, cache=cache)
 
 def export(outdir=None):
     """Get metadata and prepare locally cached viset representation"""
@@ -45,7 +39,7 @@ def export(outdir=None):
     with open(outfile, 'wb') as csvfile:            
         f = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)        
         for (k, line) in enumerate(open(txt_dev_images,'r')):
-            row = line.rstrip().split()
+            row = line.decode('utf-8').rstrip().split()
             if row[0] is not '#':
                 f.writerow([row[3], '%s_%s' % (row[0], row[1])])
 

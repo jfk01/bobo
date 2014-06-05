@@ -4,6 +4,7 @@ from bubo.show import imshow
 from bubo.util import isnumpy, quietprint, isstring
 import httplib, urllib2
 
+
 class ImageCategory():
     cachedimage = None
     image = None
@@ -27,7 +28,7 @@ class ImageCategory():
 
     def parse(self, row):
         """Parse a row from a viset csv textfile into image and category"""
-        rowlist = str(row).split()
+        rowlist = row.encode('utf-8').split()
         self.category = rowlist[1]
         self.cachedimage = CachedObject(rowlist[0], cache=self.cache)        
         self.image = None
@@ -54,6 +55,8 @@ class ImageCategory():
         else:
             return None
 
+    def iscategory(self, category):
+        return (self.category.lower() == category.lower())
                 
     def show(self):
         if self.load() is not None:

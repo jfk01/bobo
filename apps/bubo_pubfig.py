@@ -9,4 +9,8 @@ imstream = pubfig.load()
 sc.textFile(csvfile).foreach(lambda x: imstream[x].load())
 
 
+# [x.show() for x in pubfig.load() if x.iscategory('Steve_Martin')]
+# sc.textFile(pubfig.export()).filter(lambda x: pubfig.load()[x].iscategory('Zach_Braff')).count()
+
+
     
