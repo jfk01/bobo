@@ -30,6 +30,7 @@ Supported Datasets
 6. MNIST
 7. LabelMe3 
 8. Pascal VOC 2012 
+9. PubFig
 
 
 Dependencies

@@ -40,7 +40,7 @@ class ImageCategory():
             return self.image
         elif self.cachedimage is not None:
             try:
-                quietprint('[viset.image]: loading cached image "%s"'% self.cachedimage.uri, True);                
+                quietprint('[viset.image]: loading "%s"'% self.cachedimage.uri, True);                
                 self.image = self.cachedimage.load()
             except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
                 quietprint('[viset.image][WARNING]: download failed - ignoring image', True);

@@ -27,7 +27,7 @@ def generate_sha1(filepath):
 def verify_sha1(filename, sha1):
     data = open(filename, 'rb').read()
     if sha1 != hashlib.sha1(data).hexdigest():
-        raise IOError("[viset.cache]: File '%s': invalid SHA-1 hash!  This file must be deleted manually." % filename)
+        raise IOError("[bubo.cache]: File '%s': invalid SHA-1 hash!  This file must be deleted manually." % filename)
 
 def verify_md5(filename, md5):
     data = open(filename, 'rb').read()
@@ -53,7 +53,7 @@ def download(url, output_filename, sha1=None, verbose=True, md5=None, timeout=No
     dl_size = 0
 
     if verbose:
-        print "[viset.cache]: Downloading '%s' to '%s'" % (url, output_filename)
+        print "[bubo.cache]: Downloading '%s' to '%s'" % (url, output_filename)
     # display  progress only if we know the length
     if 'content-length' in page_info and verbose:
         # file size in Kilobytes
@@ -93,7 +93,7 @@ def extract(archive_filename, output_dirname, sha1=None, verbose=True):
     * gzip compressed files
     """
     if verbose:
-        print "[viset.cache]: Extracting '%s' to '%s'" % (archive_filename, output_dirname)
+        print "[bubo.cache]: Extracting '%s' to '%s'" % (archive_filename, output_dirname)
     if sha1 is not None:
         if verbose:
             print " SHA-1 verification..."
