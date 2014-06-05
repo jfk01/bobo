@@ -74,8 +74,7 @@ class ImageCategoryStream(object):
         self._cache = cache
 
     def __iter__(self):
-        if self.reader is None:
-            self.reader = csv.reader(open(self._csvfile, 'rb'), delimiter=' ', quotechar='|')            
+        self.reader = csv.reader(open(self._csvfile, 'rb'), delimiter=' ', quotechar='|')  # reopen
         return self
 
     def __getitem__(self, item):
