@@ -1,7 +1,7 @@
 import os
 import csv
 from bubo.cache import Cache
-from bubo.util import remkdir
+from bubo.util import remkdir, isstring
 from bubo.image import ImageCategoryStream
 from nltk.corpus import wordnet
 
@@ -11,6 +11,9 @@ TXTFILE = 'fall11_urls.txt'
 VISET = 'imagenet_fall2011'
 
 
+def csvfile(outdir=None):
+    return os.path.join(cache(outdir).root(), subdir=VISET, '%s.csv' % VISET)
+    
 def cache(outdir=None):
     return Cache(outdir, subdir=VISET)
     

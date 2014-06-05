@@ -214,7 +214,7 @@ def isfile(path):
     return os.path.isfile(str(path))
 
 def isstring(obj):
-    return (str(type(obj)) in ['<type \'str\'>'])
+    return (str(type(obj)) in ['<type \'str\'>', '<type \'unicode\'>'])
         
 def timestamp():
     """Return date and time string in form DDMMMYY_HHMMSS"""

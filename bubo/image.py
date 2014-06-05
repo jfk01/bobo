@@ -1,7 +1,7 @@
 import csv
 from bubo.cache import CachedObject, Cache, CacheError
 from bubo.show import imshow
-from bubo.util import isnumpy, quietprint
+from bubo.util import isnumpy, quietprint, isstring
 import httplib, urllib2
 
 class ImageCategory():
@@ -45,6 +45,8 @@ class ImageCategory():
                 quietprint('[viset.image][WARNING]: download failed - ignoring image', True);
             except CacheError:
                 quietprint('[viset.image][WARNING]: cache error during download - ignoring image', True);                
+            except IOError:
+                quietprint('[viset.image][WARNING]: IO error during download - ignoring image', True);                
             except:
                 raise
                 
@@ -62,14 +64,32 @@ class ImageCategoryStream(object):
     """A stream of labeled imagery"""
     _csvfile = None
     _cache = None
+    reader = None
     
     def __init__(self, csvfile, cache=Cache()):        
         self._csvfile = csvfile
         self._cache = cache
-        self.reader = csv.reader(open(self._csvfile, 'rb'), delimiter=' ', quotechar='|')
 
     def __iter__(self):
+        if self.reader is None:
+            self.reader = csv.reader(open(self._csvfile, 'rb'), delimiter=' ', quotechar='|')            
         return self
+
+    def __getitem__(self, item):
+        if isstring(item):
+            # assume that item is a row from a viset csv file
+            return ImageCategory(cache=self._cache).parse(item)
+        else:
+            # Inefficient method for random stream access
+            print type(item)
+            f = open(self._csvfile, 'r')
+            for i in range(item):
+                line = f.readline()
+                if len(line) == 0:
+                    raise IndexError('Invalid index "%d"' % item)  # end of file
+            f.close()
+            row = line.split()
+            return (ImageCategory(row[0], category=row[1], cache=self._cache))        
 
     def next(self):
         row = self.reader.next()

@@ -24,13 +24,13 @@ class Cache():
     
     def __init__(self, cacheroot=None, maxsize=10E9, verbose=True, strategy='lru', refetch=False, subdir=None):
         if cacheroot is not None:
-            self._setroot(cacheroot)
+            self.setroot(cacheroot)
         elif os.environ.get('VISYM_CACHE_ROOT') is not None:
-            self._setroot(os.environ.get('VISYM_CACHE_ROOT'))
+            self.setroot(os.environ.get('VISYM_CACHE_ROOT'))
         else:
-            self._setroot(path.join(os.environ['HOME'],'.visym','cache'))
+            self.setroot(path.join(os.environ['HOME'],'.visym','cache'))
         if subdir is not None:
-            self._setroot(os.path.join(self.root(), subdir))
+            self.setroot(os.path.join(self.root(), subdir))
         self._maxsize = maxsize
         self._verbose = verbose
         self._strategy = strategy
@@ -49,7 +49,7 @@ class Cache():
     def __getitem__(self, uri):
         return self.get(uri)
 
-    def _setroot(self, path):
+    def setroot(self, path):
         self._cacheroot = path
         remkdir(self._cacheroot)
             
