@@ -10,7 +10,7 @@ from urllib2 import urlopen
 from os import path
 import hashlib
 import sys
-import viset.util
+import bubo.util
 import archive
 import os
 
@@ -121,7 +121,7 @@ def extract_and_cleanup(archive_filename, output_dirname, sha1=None, verbose=Tru
     os.remove(path.join(output_dirname, path.basename(url)))
     
 def cache_and_extract(url, output_dirname, sha1=None, verbose=True):
-    if not viset.util.isfile(path.join(output_dirname, path.basename(url))):
+    if not bubo.util.isfile(path.join(output_dirname, path.basename(url))):
         download_and_extract(url, output_dirname, sha1, verbose)
         
 

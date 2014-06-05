@@ -5,8 +5,8 @@ from os import path
 import hashlib
 import numpy
 import urlparse
-from bubo.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir
-import viset.download
+from bubo.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir, splitextension
+import bubo.viset.download
 import pylab
 import string
 import shutil
@@ -35,7 +35,7 @@ class Cache():
         self._verbose = verbose
         self._strategy = strategy
         self._refetch = refetch
-        quietprint('[bubo.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
+        #quietprint('[bubo.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
         
     def __len__(self):
         if self._cachesize is not None:
@@ -59,7 +59,7 @@ class Cache():
         filename = self.abspath(self.key(urlparse.urldefrag(url)[0]))
         url_scheme = urlparse.urlparse(url)[0]
         if url_scheme == 'http':
-            viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
+            bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
         elif url_scheme == 'file':
             shutil.copyfile(url, filename)
         elif url_scheme == 'hdfs':
@@ -75,7 +75,7 @@ class Cache():
         p = urlparse.urlsplit(url)
         urlquery = urlparse.urlunsplit([p[0],p[1],p[2],p[3],None])
         urlpath = urlparse.urlunsplit([p[0],p[1],p[2],None,None])        
-        (filename, ext) = viset.util.splitextension(urlpath)
+        (filename, ext) = splitextension(urlpath)
         #urlopt = self._url_fragment_options(url)
         urlhash = hashlib.sha1(urlquery).hexdigest()
         if prettyhash:    
@@ -208,7 +208,7 @@ class Cache():
             urlquery = urlparse.urlunsplit([p[0],p[1],p[2],p[3],None])        
             urlpath = urlparse.urlunsplit([p[0],p[1],p[2],None,None])
             urlhash = self._hash(obj)
-            (filename, ext) = viset.util.splitextension(path.basename(urlpath))
+            (filename, ext) = splitextension(path.basename(urlpath))
             key = str(urlhash) + str(ext)
         elif os.path.isfile(obj):
             # within cache?
@@ -219,7 +219,7 @@ class Cache():
             else:
                 # key is filename with unique appended hash
                 (head, tail) = os.path.split(obj)
-                (filename, ext) = viset.util.splitextension(tail)                 
+                (filename, ext) = splitextension(tail)                 
                 namehash = hashlib.sha1(tail).hexdigest()                 
                 key = filename + '_' + str(namehash[0:7]) + ext
         elif (path.isfile(self.abspath(obj)) or path.isdir(self.abspath(obj))):
@@ -253,7 +253,7 @@ class Cache():
                 unpackdir = self.abspath(unpackto)
             if not path.exists(unpackdir):
                 os.makedirs(unpackdir)
-            viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)                
+            bubo.viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)                
             if cleanup:
                 quietprint('[bubo.cache]: Deleting archive "%s" ' % (pkgkey), self._verbose)                                
                 os.remove(filename)

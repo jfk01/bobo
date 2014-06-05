@@ -1,29 +1,37 @@
 import os
 import csv
 from bubo.cache import Cache
+from bubo.image import ImageCategoryStream
 
 URL = 'http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz'
 SHA1 = 'b8ca4fe15bcd0921dfda882bd6052807e63b4c96'
 VISET = 'caltech101'
+SUBDIR = '101_ObjectCategories'
 
-def cache(outdir=None):
-    return Cache(outdir, subdir=VISET)
+cache = Cache(subdir=VISET)
 
-def download(outdir=None):
-    return Cache(outdir).get(URL, sha1=SHA1, cacheid=VISET)
+def stream(csvfile=None, outdir=None):
+    if csvfile is None:
+        csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
+    if outdir is not None:
+        cache.setroot(outdir)
+    if not os.path.isfile(csvfile):
+        csvfile = export()
     
-def export(outfile=None, outdir=None, do_json=False):
+    return ImageCategoryStream(csvfile, cache=cache)
+
+def export(outdir=None):
     # Unpack dataset
-    cache = Cache(outdir, subdir=VISET)
+    if outdir is not None:
+        cache.setroot(outdir)
     key = cache.get(URL)
     pkgdir = cache.unpack(key, None, sha1=SHA1, cleanup=False)
 
     # Output file
-    if outfile is None:
-        outfile = cache.abspath('%s.csv' % VISET)    
+    outfile = cache.abspath('%s.csv' % VISET)    
     
     # Return json or CSV file containing dataset description    
-    categorydir = os.path.join(cache.root(), '101_ObjectCategories')          
+    categorydir = os.path.join(cache.root(), SUBDIR)          
 
     # Write to annotation stream
     with open(outfile, 'wb') as csvfile:        

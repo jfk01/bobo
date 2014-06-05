@@ -12,7 +12,7 @@ VISET = 'pubfig'
 
 cache = Cache(subdir=VISET)
 
-def load(csvfile=None):
+def stream(csvfile=None, outdir=None):
     """Return interface objects for this dataset"""
     if csvfile is None:
         csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            

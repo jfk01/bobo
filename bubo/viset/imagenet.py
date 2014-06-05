@@ -11,6 +11,7 @@ TXTFILE = 'fall11_urls.txt'
 VISET = 'imagenet_fall2011'
 
 cache = Cache(subdir=VISET)
+
     
 def category(wnid):
     pos = wnid[0]
@@ -22,7 +23,8 @@ def stream(csvfile=None, outdir=None):
         csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
     if outdir is not None:
         cache.setroot(outdir)
-
+    if not os.path.isfile(csvfile):
+        csvfile = export()        
     return ImageCategoryStream(csvfile, cache=cache)
         
 def export(outdir=None):
@@ -53,9 +55,9 @@ def export(outdir=None):
                     raise
 
                 if (k % 10000) == 0:
-                    print '[viset.library.imagenet][%d/14200000]: exporting "%s"' % (k, url)
+                    print '[bubo.viset.imagenet][%d/14200000]: exporting "%s"' % (k, url)
     else:
-        print '[viset.library.imagenet]: returning cached viset file "%s"' % (outfile)        
+        print '[bubo.viset.imagenet]: returning cached viset file "%s"' % (outfile)        
 
     # Done!
     return outfile

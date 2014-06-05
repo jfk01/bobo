@@ -167,7 +167,7 @@ def bgr2rgb(im_bgr):
 
 def isarchive(filename):
     (filebase, ext) = splitextension(filename)
-    if (ext is not None) and (len(ext) > 0) and (ext.lower() in ['.egg','.jar','.tar','.tar.bz2','.tar.gz','.tgz','.tz2','.zip']):
+    if (ext is not None) and (len(ext) > 0) and (ext.lower() in ['.egg','.jar','.tar','.tar.bz2','.tar.gz','.tgz','.tz2','.zip','.gz']):
         return True
     else:
         return False

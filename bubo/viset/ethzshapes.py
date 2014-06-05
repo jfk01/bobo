@@ -1,3 +1,6 @@
+raise('FIXME: update to new viset format')
+
+
 import tables
 import os
 from os import path
