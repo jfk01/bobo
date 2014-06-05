@@ -21,9 +21,9 @@ class ImageCategory():
         
     def __repr__(self):
         if self.image is not None:
-            return str('<viset.image.imcategory: image=(%d,%d), category="%s">' % (self.image.shape[0], self.image.shape[1], self.category))
+            return str('<bubo.image.imcategory: image=(%d,%d), category="%s">' % (self.image.shape[0], self.image.shape[1], self.category))
         else:
-            return str('<viset.image.imcategory: uri="%s", category="%s">' % (self.cachedimage.uri, self.category))            
+            return str('<bubo.image.imcategory: uri="%s", category="%s">' % (self.cachedimage.uri, self.category))            
             return self.cachedimage.__repr__()
 
     def parse(self, row):
@@ -40,14 +40,14 @@ class ImageCategory():
             return self.image
         elif self.cachedimage is not None:
             try:
-                quietprint('[viset.image]: loading "%s"'% self.cachedimage.uri, True);                
+                quietprint('[bubo.image]: loading "%s"'% self.cachedimage.uri, True);                
                 self.image = self.cachedimage.load()
             except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
-                quietprint('[viset.image][WARNING]: download failed - ignoring image', True);
+                quietprint('[bubo.image][WARNING]: download failed - ignoring image', True);
             except CacheError:
-                quietprint('[viset.image][WARNING]: cache error during download - ignoring image', True);                
+                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);                
             except IOError:
-                quietprint('[viset.image][WARNING]: IO error during download - ignoring image', True);                
+                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);                
             except:
                 raise
                 
