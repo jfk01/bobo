@@ -40,9 +40,10 @@ def export(outdir=None):
     with open(outfile, 'wb') as csvfile:            
         f = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)        
         for (idx_category, category) in enumerate(os.listdir(categorydir)):
-            imdir = os.path.join(categorydir, category)        
-            for im in os.listdir(imdir):
-                f.writerow([cache.key(os.path.join(categorydir, category, im)), category]);
+            if os.path.isdir(os.path.join(categorydir, category)):
+                imdir = os.path.join(categorydir, category)        
+                for im in os.listdir(imdir):
+                    f.writerow([cache.key(os.path.join(categorydir, category, im)), category]);
 
     # Done!
     return outfile
