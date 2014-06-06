@@ -22,8 +22,8 @@ def stream(csvfile=None, outdir=None):
         csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
     if outdir is not None:
         cache.setroot(outdir)
-    #if not os.path.isfile(csvfile):
-    csvfile = export()        
+    if not os.path.isfile(csvfile):
+        csvfile = export()        
     return ImageCategoryStream(csvfile, cache=cache)
         
 def export(outdir=None):

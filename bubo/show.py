@@ -28,7 +28,10 @@ def closeall():
     
 def imshow(im, handle=None):    
     BACKEND.imshow(im, handle)
-    
+
+def imbbox(im, xmin, ymin, xmax, ymax, bboxcaption=None):    
+    BACKEND.imbbox(im, xmin, ymin, xmax, ymax, bboxcaption)
+        
 def rectangle(bbox, color='green', caption=None, filled=False, linewidth=1):
     BACKEND.rectangle(bbox, color, caption, filled, linewidth)
 

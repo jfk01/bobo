@@ -29,15 +29,13 @@ def export(outdir=None):
         cache.setroot(outdir)
 
     # Fetch data necessary to initial construction
-    #pkgdir = cache.unpack(cache.get(URL), sha1=SHA1)
-    pkgdir = os.path.join(cache.root())
+    pkgdir = cache.unpack(cache.get(URL), sha1=SHA1)
     imsetdir = os.path.join(pkgdir, IMSETDIR)                              
     outfile = os.path.join(cache.root(), '%s.csv' % VISET)
     
     # Write images to database
     with open(outfile, 'wb') as csvfile:            
         f = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-
         for (idx_category, imset) in enumerate(os.listdir(imsetdir)):
             (filebase,ext) = os.path.splitext(os.path.basename(imset))
             try:
