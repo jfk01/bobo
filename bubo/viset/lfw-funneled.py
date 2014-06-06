@@ -5,10 +5,10 @@ lfw.SHA1 = None
 lfw.SUBDIR = 'lfw_funneled'
 lfw.VISET = 'lfw'
 
-def stream(csvfile=None, outdir=None):
-    return lfw.stream(csvfile, outdir)
+def stream(outdir=None):
+    return lfw.stream(outdir)
         
 def export(outdir=None):
-    return lfw.export(csvfile, outdir)
+    return lfw.export(outdir)
 
 

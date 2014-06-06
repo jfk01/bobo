@@ -10,8 +10,8 @@ caltech101.cache = Cache(None, subdir=caltech101.VISET)
 
 print caltech101.cache.root()
 
-def stream(csvfile=None, outdir=None):
-    return caltech101.stream(csvfile, outdir)
+def stream(outdir=None):
+    return caltech101.stream(outdir)
 
 def export(outdir=None):
     return caltech101.export(outdir)    

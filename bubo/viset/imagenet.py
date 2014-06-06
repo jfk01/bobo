@@ -18,11 +18,10 @@ def category(wnid):
     synset = wordnet._synset_from_pos_and_offset(pos, int(str(wnid[1:]).lstrip('0')))  # assume noun
     return str(synset.lemmas[0].name).replace(" ","_")
 
-def stream(csvfile=None, outdir=None):
-    if csvfile is None:
-        csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
+def stream(outdir=None):
     if outdir is not None:
         cache.setroot(outdir)
+    csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
     if not os.path.isfile(csvfile):
         csvfile = export()        
     return ImageCategoryStream(csvfile, cache=cache)

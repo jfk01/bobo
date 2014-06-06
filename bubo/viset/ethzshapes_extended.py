@@ -9,8 +9,8 @@ ethzshapes.VISET = 'ethzshapes'
 
 cache = Cache(subdir=ethzshapes.VISET)
 
-def stream(csvfile=None, outdir=None):
-    return ethzshapes.stream(csvfile, outdir)
+def stream(outdir=None):
+    return ethzshapes.stream(outdir)
 
 def export(outdir=None):
     return ethzshapes.export(outdir)
