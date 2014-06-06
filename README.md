@@ -31,7 +31,9 @@ Supported Datasets
 7. LabelMe3 
 8. Pascal VOC 2012 
 9. PubFig
-
+10. Labeled Faces in the Wild (LFW)
+11. LFW - Deep Funneled
+12. LFW - Funneled
 
 Dependencies
 ------------
