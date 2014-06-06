@@ -10,27 +10,29 @@ SHA1 = 'f5fd118232b871727fe333778be81df6c6fec372'
 TXTFILE = 'fall11_urls.txt'
 VISET = 'imagenet_fall2011'
 
-cache = Cache(subdir=VISET)
-
-    
 def category(wnid):
     pos = wnid[0]
     synset = wordnet._synset_from_pos_and_offset(pos, int(str(wnid[1:]).lstrip('0')))  # assume noun
     return str(synset.lemmas[0].name).replace(" ","_")
 
-def stream(outdir=None):
+def stream(indir=None, outdir=None):
+    cache = Cache(subdir=VISET)
     if outdir is not None:
         cache.setroot(outdir)
-    csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
+    if indir is not None:
+        csvfile = os.path.join(indir, '%s.csv' % VISET)                    
+    else:
+        csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
     if not os.path.isfile(csvfile):
         csvfile = export()        
     return ImageCategoryStream(csvfile, cache=cache)
         
 def export(outdir=None):
     # Update cache
+    cache = Cache(subdir=VISET)   # non-global cache!
     if outdir is not None:
         cache.setroot(outdir)
-        
+
     # Fetch textfile for construction
     txtfile = os.path.join(cache.root(), TXTFILE)
     if not os.path.isfile(txtfile):
@@ -44,8 +46,8 @@ def export(outdir=None):
             for (k, line) in enumerate(open(txtfile,'r')):
                 try:
                     (name, url) = line.decode('utf-8').rstrip().split('\t')
-                    (synset, suffix) = name.decode('utf-8').rstrip().split('_')      
-                    f.writerow([url.encode('utf-8'), category(synset).encode('utf-8')])
+                    (wnid, suffix) = name.decode('utf-8').rstrip().split('_')      
+                    f.writerow([url.encode('utf-8'), wnid.encode('utf-8')])
                 except KeyboardInterrupt:
                     raise
                 except ValueError:
@@ -54,7 +56,7 @@ def export(outdir=None):
                     raise
 
                 if (k % 10000) == 0:
-                    print '[bubo.viset.imagenet][%d/14200000]: exporting "%s"' % (k, url)
+                    print '[bubo.viset.imagenet][%d/14200000]: exporting "%s"' % (k, url.encode('utf-8'))
     else:
         print '[bubo.viset.imagenet]: returning cached viset file "%s"' % (outfile)        
 

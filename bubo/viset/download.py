@@ -6,6 +6,9 @@
 #          Nicolas Poilvert <poilvert@rowland.harvard.edu>
 # License: BSD 3 clause
 
+
+#import socket
+#socket.setdefaulttimeout(15)  # do not set globally?
 from urllib2 import urlopen
 from os import path
 import hashlib
@@ -13,7 +16,6 @@ import sys
 import bubo.util
 import archive
 import os
-
 
 def generate_sha1(filepath):
     sha1 = hashlib.sha1()
@@ -38,12 +40,10 @@ def verify_md5(filename, md5):
 
 def download(url, output_filename, sha1=None, verbose=True, md5=None, timeout=None):
     """Downloads file at `url` and write it in `output_dirname`"""
-
-    # socket.setdefaulttimeout(10)  # do not set globally
     if timeout == None:
         timeout = 5
       
-    page = urlopen(url, timeout=timeout)
+    page = urlopen(url, None, timeout=timeout)
     page_info = page.info()
 
     output_file = open(output_filename, 'wb+')
