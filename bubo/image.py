@@ -1,4 +1,4 @@
-import csv
+import csv, os
 from bubo.cache import CachedObject, Cache, CacheError
 from bubo.show import imshow, imbbox
 from bubo.util import isnumpy, quietprint, isstring
@@ -92,15 +92,21 @@ class ImageCategory():
             try:
                 quietprint('[bubo.image]: loading "%s"'% self.cachedimage.uri, True);                
                 self.image = self.cachedimage.load()
+                if self.cachedimage.size() < 10000:
+                    quietprint('[bubo.image][WARNING]: invalid download size - ignoring image', True);                                    
+                    os.remove(self.cachedimage.filename())
+                    return None
             except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
                 quietprint('[bubo.image][WARNING]: download failed - ignoring image', True);
+                self.cachedimage.discard()                
             except CacheError:
-                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);                
+                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);
+                self.cachedimage.discard()                
             except IOError:
-                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);                
+                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);
+                self.cachedimage.discard()                
             except:
                 raise
-                
             return self.image
         else:
             return None

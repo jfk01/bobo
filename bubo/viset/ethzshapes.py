@@ -13,13 +13,12 @@ VISET = 'ethzshapes'
 
 cache = Cache(subdir=VISET)
 
-def stream(csvfile=None, outdir=None):
-    if csvfile is None:
-        csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
+def stream(outdir=None):
     if outdir is not None:
-        cache.setroot(outdir)
-    #if not os.path.isfile(csvfile):
-    csvfile = export()        
+        cache.setroot(outdir)    
+    csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
+    if not os.path.isfile(csvfile):
+        csvfile = export()        
     return ImageDetectionStream(csvfile, cache=cache)
 
 def export(outdir=None):

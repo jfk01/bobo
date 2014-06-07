@@ -1,3 +1,5 @@
+raise('FIXME: update this test to new cache structure')
+
 from viset.cache import Cache
 from viset.show import imshow
 from time import sleep

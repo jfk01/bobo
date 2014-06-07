@@ -60,6 +60,8 @@ class Cache():
         url_scheme = urlparse.urlparse(url)[0]
         if url_scheme in ['http', 'https']:
             bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
+        elif url_scheme == 'https':
+            bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
         elif url_scheme == 'file':
             shutil.copyfile(url, filename)
         elif url_scheme == 'hdfs':
@@ -147,11 +149,9 @@ class Cache():
     def discard(self, uri):
         """Delete single url from cache"""
         if self.iscached(uri):
-            quietprint('[bubo.cache]: Removing key "%s" ' % (uri), self._verbose)            
-            os.remove(self.abspath(uri))
-        elif self.iscached(uri):
-            quietprint('[bubo.cache]: Removing cached URI "%s" key "%s" ' % (uri, self.key(uri)), self._verbose)
-            os.remove(self.abspath(self.key(uri)))
+            quietprint('[bubo.cache]: Removing key "%s" ' % (self.key(uri)), self._verbose)
+            if os.path.isfile(self.abspath(self.key(uri))):
+                os.remove(self.abspath(self.key(uri)))
         elif os.path.isdir(self.abspath(uri)):
             quietprint('[bubo.cache]: Removing cached directory "%s" ' % (uri), self._verbose)
             shutil.rmtree(self.abspath(self.cacheid(url)))
@@ -181,16 +181,23 @@ class Cache():
         """Delete entire cache"""
         self.delete()
 
-    def size(self):
+    def size(self, key=None):
         """Recursively compute the size in bytes of a cache directory: http://snipplr.com/view/47686/"""
-        total_size = os.path.getsize(self.root())
-        for item in os.listdir(self.root()):
-            itempath = os.path.join(self.root(), item)
-            if os.path.isfile(itempath):
-                total_size += os.path.getsize(itempath)
-            elif os.path.isdir(itempath):
-                total_size += self.size(itempath)
-        return total_size
+        if key is None:
+            total_size = os.path.getsize(self.root())
+            for item in os.listdir(self.root()):
+                itempath = os.path.join(self.root(), item)
+                if os.path.isfile(itempath):
+                    total_size += os.path.getsize(itempath)
+                elif os.path.isdir(itempath):
+                    total_size += self.size(itempath)
+            return total_size
+        else:
+            if os.path.isfile(self.abspath(self.key(key))):            
+                return os.path.getsize(self.abspath(self.key(key)))
+            else:
+                return 0
+            
 
     def iscached(self, uri):
         """Return true if a uri is in the cache"""
@@ -287,4 +294,13 @@ class CachedObject(object):
         return str('<bubo.cache: obj=' + str(type(self.obj)) + ', cached=' + str(self._cache.iscached(self.uri)) + ', key=\'' + str(self._cache.key(self.uri)) + '\'>')
 
     
+    def size(self):
+        return self._cache.size(self.uri)
+
+    def filename(self):
+        return self._cache.abspath(self._cache.key(self.uri))
+
+    def discard(self):
+        return self._cache.discard(self.uri)
+        
     
