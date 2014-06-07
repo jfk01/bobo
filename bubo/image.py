@@ -5,6 +5,57 @@ from bubo.util import isnumpy, quietprint, isstring
 import httplib, urllib2
 
 
+class Image():
+    cachedimage = None
+    image = None
+    cache = None
+    
+    def __init__(self, image=None, cache=Cache()):
+        if isnumpy(image):
+            self.image = image
+        elif image is not None:
+            self.cachedimage = CachedObject(image, cache)
+        self.cache = cache
+        
+    def __repr__(self):
+        if self.image is not None:
+            return str('<bubo.image: image=(%d,%d)>' % (self.image.shape[0], self.image.shape[1]))
+        else:
+            return str('<bubo.image: uri="%s">' % (self.cachedimage.uri))            
+
+    def parse(self, row):
+        """Parse a row from a viset csv textfile into image"""
+        self.cachedimage = CachedObject(row, cache=self.cache)        
+        self.image = None
+        return self
+    
+    def load(self):
+        """Load images from cache"""
+        if self.image is not None:
+            return self.image
+        elif self.cachedimage is not None:
+            try:
+                quietprint('[bubo.image]: loading "%s"'% self.cachedimage.uri, True);                
+                self.image = self.cachedimage.load()
+            except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
+                quietprint('[bubo.image][WARNING]: download failed - ignoring image', True);
+            except CacheError:
+                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);                
+            except IOError:
+                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);                
+            except:
+                #raise
+                quietprint('[bubo.image][WARNING]: error during download - ignoring image', True);                
+                pass
+                
+            return self.image
+        else:
+            return None
+
+    def show(self):
+        if self.load() is not None:
+            imshow(self.image)
+
 class ImageCategory():
     cachedimage = None
     image = None

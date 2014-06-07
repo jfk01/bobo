@@ -58,7 +58,7 @@ class Cache():
         #self._free()  # garbage collection time?        
         filename = self.abspath(self.key(urlparse.urldefrag(url)[0]))
         url_scheme = urlparse.urlparse(url)[0]
-        if url_scheme == 'http':
+        if url_scheme in ['http', 'https']:
             bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
         elif url_scheme == 'file':
             shutil.copyfile(url, filename)
