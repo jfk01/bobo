@@ -167,7 +167,10 @@ class Cache():
             f = h5py.File(filename, 'r')
             obj = f[self.key(filename)].value  # FIXME: lazy evaluation?              
         else:
-            raise CacheError('[bubo.cache][ERROR]: unsupported object type for loading key "%s" ' % self.key(uri))
+            try:
+                obj = pylab.imread(filename)
+            except:
+                raise CacheError('[bubo.cache][ERROR]: unsupported object type for loading key "%s" ' % self.key(uri))
         return obj
         
             
