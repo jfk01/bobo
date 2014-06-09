@@ -28,8 +28,7 @@ def generate_sha1(filepath):
 
 def verify_sha1(filename, sha1):
     data = open(filename, 'rb').read()
-    if sha1 != hashlib.sha1(data).hexdigest():
-        raise IOError("[bubo.cache]: File '%s': invalid SHA-1 hash!  This file must be deleted manually." % filename)
+    return (sha1 == hashlib.sha1(data).hexdigest())
 
 def verify_md5(filename, md5):
     data = open(filename, 'rb').read()
@@ -72,12 +71,26 @@ def download(url, output_filename, sha1=None, verbose=True, md5=None, timeout=No
             sys.stdout.flush()
         print ''
     else:
-        output_file.write(page.read())
+        while True:
+            buffer = page.read(block_size)
+            if not buffer:
+                break
+            dl_size += block_size / 1024
+            output_file.write(buffer)
+            #percent = min(100, 100. * dl_size / file_size)
+            status = r"Progress: %20d kilobytes" \
+                    % (dl_size)
+            status = status + chr(8) * (len(status) + 1) 
+            print status, # space instead of newline
+            sys.stdout.flush()
+        print ''
+        #output_file.write(page.read())
 
     output_file.close()
 
     if sha1 is not None:
-        verify_sha1(output_filename, sha1)
+        if not verify_sha1(output_filename, sha1):
+            raise IOError('invalud sha1')
 
     if md5 is not None:
         verify_md5(output_filename, md5)

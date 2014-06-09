@@ -59,9 +59,7 @@ class Cache():
         filename = self.abspath(self.key(urlparse.urldefrag(url)[0]))
         url_scheme = urlparse.urlparse(url)[0]
         if url_scheme in ['http', 'https']:
-            bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
-        elif url_scheme == 'https':
-            bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout)                       
+            bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout, sha1=None)                       
         elif url_scheme == 'file':
             shutil.copyfile(url, filename)
         elif url_scheme == 'hdfs':
@@ -117,8 +115,10 @@ class Cache():
         # URL - download and save to cache with provided key
         elif isurl(obj):
             quietprint('[bubo.cache][PUT]: "%s" key "%s"' % (obj, key), self._verbose)                                                                                             
-            filename = self._download(obj, timeout=timeout, sha1=sha1)
+            filename = self._download(obj, timeout=timeout)
             shutil.move(filename, self.abspath(key))
+
+            
             
         # Unsupported type!
         else:
@@ -126,9 +126,8 @@ class Cache():
             
         # Return cache key 
         return key        
-
         
-    def get(self, uri):
+    def get(self, uri, sha1=None):
         """Get the value associated with a key from the cache and return object""" 
         if self.iscached(uri) and self._iskey(uri):
             # URI is a cache key, return absolute filename in cache 
@@ -138,11 +137,21 @@ class Cache():
             # Convert URI to cache key, return absolute filename in cache
             quietprint('[bubo.cache][HIT]: "%s" key "%s" ' % (uri, self.key(uri)), True)
             filename = self.abspath(self.key(uri))  
-        else:
+        elif bubo.util.isurl(uri):
             quietprint('[bubo.cache][MISS]: downloading "%s"... ' % (uri), True)  
             self.discard(uri)
             filename = self.abspath(self.put(uri))
-
+        else:
+            raise CacheError('[bubo.cache][ERROR]: invalid uri "%s"' % uri)
+        
+        # SHA1 check?
+        if sha1 is not None:
+            quietprint('[bubo.cache]: Verifying SHA1... ', True)                          
+            if not bubo.viset.download.verify_sha1(filename, sha1):
+                quietprint('[bubo.cache][ERROR]: invalid SHA1 - discarding and refetching... ', True)  
+                self.discard(uri)            
+                self.get(uri, sha1)  # discard and try again
+        
         # Return absolute file
         return filename
 

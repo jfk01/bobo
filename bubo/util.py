@@ -22,7 +22,7 @@ def setverbosity(v):
 
 def sha1(filename):
     sha1 = hashlib.sha1()
-    f = open(filepath, 'rb')
+    f = open(filename, 'rb')
     try:
         sha1.update(f.read())
     finally:
@@ -118,7 +118,14 @@ def tolist(x):
     
 def isimg(path):
   (filename, ext) = os.path.splitext(path)
-  if ext.lower() in ['.jpg','.jpeg','.png','.tif','.tiff','.pgm','.ppm','.gif',]:
+  if ext.lower() in ['.jpg','.jpeg','.png','.tif','.tiff','.pgm','.ppm','.gif']:
+    return True
+  else:
+    return False
+
+def isvideo(path):
+  (filename, ext) = os.path.splitext(path)
+  if ext.lower() in ['.avi','.mp4','.mov','.wmv']:
     return True
   else:
     return False
