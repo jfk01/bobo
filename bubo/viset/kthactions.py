@@ -21,6 +21,9 @@ VISET = 'kthactions'
 
 cache = Cache(subdir=VISET)
 
+    
+
+
 def export_videolist(outdir):
     vidlist = []
     for (idx_category, category) in enumerate(os.listdir(indir)):
@@ -38,11 +41,15 @@ def export(outdir=None, clean=False):
         cache.setroot(outdir)
     if clean:
         cache.clean()
-        
+                        
     print '[bubo.viset.kthactions][WARNING]: downloads will not show percent progress since content length is unknown'
     for (url, label, sha1) in zip(URLS, LABELS, SHA1):
         cache.unpack(cache.get(url, sha1), cache.abspath(label), cleanup=False)
 
+    # Check for frame export utility
+    if not bubo.util.isexe('ffmpeg'):
+        raise IOError('[bubo.viset.kthactions]: ffmpeg not found on path')
+                    
     # Video list
     outfile = cache.abspath('%s.csv' % VISET)        
     with open(outfile, 'wb') as csvfile:

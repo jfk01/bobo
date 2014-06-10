@@ -11,9 +11,24 @@ from time import gmtime, strftime, localtime
 import sys
 import csv
 import hashlib
+import bubo.viset
 
 global BUBO_VERBOSITY
 BUBO_VERBOSITY = 3
+
+
+def viset(visetname):
+    """Dynamically import requested vision dataset module"""
+    try:
+        obj = __import__("bubo.viset.%s" % visetname, fromlist=["bubo.viset"])
+    except ImportError:
+        raise ValueError('Undefined viset "%s"' % visetname)
+    return obj
+
+
+def isexe(path):
+    return os.path.isfile(path) and os.access(path, os.X_OK)
+
 
 def setverbosity(v):
     global BUBO_VERBOSITY

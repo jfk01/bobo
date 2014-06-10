@@ -153,7 +153,10 @@ class ImageCategoryStream(object):
         row = self.reader.next()
         return (ImageCategory(row[0], category=row[1], cache=self._cache))
 
-                
+    def rdd(self):
+        """Return a spark resilient distributed dataset for this image stream"""
+        pass
+      
 class ImageDetection():
     cachedimage = None
     image = None
