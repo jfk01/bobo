@@ -81,6 +81,6 @@ def stream(outdir=None):
     csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
     if not os.path.isfile(csvfile):
         csvfile = export()        
-    return VIdeoCategoryStream(csvfile, cache=cache)
+    return VideoCategoryStream(csvfile, cache=cache)
         
 

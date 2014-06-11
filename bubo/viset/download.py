@@ -40,7 +40,7 @@ def verify_md5(filename, md5):
 def download(url, output_filename, sha1=None, verbose=True, md5=None, timeout=None):
     """Downloads file at `url` and write it in `output_dirname`"""
     if timeout == None:
-        timeout = 5
+        timeout = 10
       
     page = urlopen(url, None, timeout=timeout)
     page_info = page.info()
