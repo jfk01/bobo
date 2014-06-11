@@ -55,8 +55,8 @@ def export(outdir=None, clean=False):
         cache.unpack(cache.get(url, sha1), cache.abspath(label), cleanup=False)
 
     # Check for frame export utility
-    if not bubo.util.isexe('ffmpeg'):
-        raise IOError('[bubo.viset.kthactions]: ffmpeg not found on path')
+    #if not isexe('ffmpeg'):
+    #    raise IOError('[bubo.viset.kthactions]: ffmpeg not found on path')
                     
     # Video list
     outfile = cache.abspath('%s.csv' % VISET)        
