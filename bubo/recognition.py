@@ -14,7 +14,7 @@ def bag_of_words(imtrain, imtest, features, outdir):
     c = spark.mlib.kmeans()
     
     # construct bag of words representation
-    bubo.recognition.
+    #bubo.recognition.
     
     # One vs. rest linear svm
     for lbl in labels:

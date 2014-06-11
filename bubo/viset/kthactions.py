@@ -2,7 +2,7 @@ import os
 import csv
 from bubo.cache import Cache
 from bubo.video import VideoCategoryStream
-from bubo.util import remkdir
+from bubo.util import remkdir, isexe
 
 URLS = ['http://www.nada.kth.se/cvap/actions/walking.zip',
         'http://www.nada.kth.se/cvap/actions/jogging.zip',
@@ -19,16 +19,25 @@ SHA1 = ['a3e81537271a0ab4576591774baa38c2d97b7e3a',
 LABELS = ['walking','jogging','running','boxing','handwaving','handclapping']
 VISET = 'kthactions'
 
-cache = Cache(subdir=VISET)
 
-    
+def split(csvfile=None):
+    if csvfile is None:
+        csvfile = export()
+    cache = Cache(cacheroot=outdir, subdir=VISET)
+    trainPeople = ['person02','person03','person05','person06','person07','person08','person09','person10','person22']
+
+    vidlist = export_videolist(outdir)
+    trainset = [vid for vid in vidlist if any(substr in vid[0] for substr in trainPeople)]
+    testset = [vid for vid in vidlist if any(substr not in vid[0] for substr in trainPeople)]    
+    return (trainset, testset)
 
 
-def export_videolist(outdir):
+def export_videolist(outdir=None):
+    cache = Cache(cacheroot=outdir, subdir=VISET)    
     vidlist = []
-    for (idx_category, category) in enumerate(os.listdir(indir)):
-        if os.path.isdir(os.path.join(indir, category)):
-            for (idx_video, filename) in enumerate(os.listdir(os.path.join(indir, category))):    
+    for (idx_category, category) in enumerate(os.listdir(cache.root())):
+        if os.path.isdir(os.path.join(cache.root(), category)):
+            for (idx_video, filename) in enumerate(os.listdir(os.path.join(cache.root(), category))):    
                 [avibase,ext] = os.path.splitext(filename)
                 if ext == '.avi':
                     vidlist.append( (os.path.join(category, filename), category) )
@@ -37,8 +46,7 @@ def export_videolist(outdir):
 
 def export(outdir=None, clean=False):
     # Unpack dataset
-    if outdir is not None:
-        cache.setroot(outdir)
+    cache = Cache(cacheroot=outdir, subdir=VISET)        
     if clean:
         cache.clean()
                         
@@ -69,8 +77,7 @@ def export(outdir=None, clean=False):
     return outfile
 
 def stream(outdir=None):
-    if outdir is not None:
-        cache.setroot(outdir)
+    cache = Cache(cacheroot=outdir, subdir=VISET)            
     csvfile = os.path.join(cache.root(), '%s.csv' % VISET)            
     if not os.path.isfile(csvfile):
         csvfile = export()        
