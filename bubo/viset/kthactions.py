@@ -23,12 +23,11 @@ VISET = 'kthactions'
 def split(csvfile=None):
     if csvfile is None:
         csvfile = export()
-    cache = Cache(cacheroot=outdir, subdir=VISET)
     trainPeople = ['person02','person03','person05','person06','person07','person08','person09','person10','person22']
 
-    vidlist = export_videolist(outdir)
-    trainset = [vid for vid in vidlist if any(substr in vid[0] for substr in trainPeople)]
-    testset = [vid for vid in vidlist if any(substr not in vid[0] for substr in trainPeople)]    
+    vidstream = VideoCategoryStream(csvfile, cache=Cache(subdir=VISET))
+    trainset = [vid for vid in vidstream if any(substr in vid.uri for substr in trainPeople)]
+    testset = [vid for vid in vidstream if any(substr not in vid.uri for substr in trainPeople)]    
     return (trainset, testset)
 
 
@@ -47,8 +46,13 @@ def export_videolist(outdir=None):
 def export(outdir=None, clean=False):
     # Unpack dataset
     cache = Cache(cacheroot=outdir, subdir=VISET)        
+    outfile = cache.abspath('%s.csv' % VISET)            
+
     if clean:
         cache.clean()
+    elif os.path.isfile(outfile):
+        print '[bubo.viset.kthactions]: exporting "%s"' % outfile
+        return outfile
                         
     print '[bubo.viset.kthactions][WARNING]: downloads will not show percent progress since content length is unknown'
     for (url, label, sha1) in zip(URLS, LABELS, SHA1):
@@ -59,7 +63,6 @@ def export(outdir=None, clean=False):
     #    raise IOError('[bubo.viset.kthactions]: ffmpeg not found on path')
                     
     # Video list
-    outfile = cache.abspath('%s.csv' % VISET)        
     with open(outfile, 'wb') as csvfile:
         f = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)                   
         for (idx_category, category) in enumerate(os.listdir(cache.root())):

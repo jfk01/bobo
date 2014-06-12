@@ -1,9 +1,19 @@
 import csv, os
 from bubo.cache import CachedObject, Cache, CacheError
 from bubo.show import imshow, imbbox
-from bubo.util import isnumpy, quietprint, isstring
+from bubo.util import isnumpy, quietprint, isstring, tempcsv
 import httplib, urllib2
 
+
+def export(objlist, outfile=None):
+    if outfile is None:
+        outfile = tempcsv()
+    with open(outfile, 'wb') as csvobj:
+        f = csv.writer(csvobj, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        for im in objlist:
+            f.writerow(im.export());                                                    
+    return outfile
+    
 
 class Image():
     cachedimage = None
@@ -118,6 +128,9 @@ class ImageCategory():
         if self.load() is not None:
             imshow(self.image)
 
+    def export(self):
+        """List suitable for export"""
+        return [os.path.join(self.cache.root(), self.cachedimage.uri), self.category]
 
 class ImageCategoryStream(object):
     """A stream of labeled imagery"""
@@ -156,7 +169,8 @@ class ImageCategoryStream(object):
     def rdd(self):
         """Return a spark resilient distributed dataset for this image stream"""
         pass
-      
+
+    
 class ImageDetection():
     cachedimage = None
     image = None

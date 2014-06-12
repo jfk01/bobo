@@ -14,7 +14,7 @@ import hashlib
 import bubo.viset
 
 global BUBO_VERBOSITY
-BUBO_VERBOSITY = 3
+BUBO_VERBOSITY = 1
 
 
 def viset(visetname):
@@ -25,14 +25,12 @@ def viset(visetname):
         raise ValueError('Undefined viset "%s"' % visetname)
     return obj
 
-
 def isexe(path):
     return os.path.isfile(path) and os.access(path, os.X_OK)
 
-
 def setverbosity(v):
     global BUBO_VERBOSITY
-    BUBO_VERBOSITY = v
+    BUBO_VERBOSITY = v  # GLOBAL!
     
 
 def sha1(filename):
@@ -205,6 +203,9 @@ def tempimage(ext='jpg'):
 def temppng():
   return tempimage('png')
 
+def tempcsv():
+  return tempfile.mktemp() + '.csv'
+
 
 def imread(imfile):
     return cv2.imread(imfile)
@@ -227,7 +228,7 @@ class Stopwatch(object):
         self.end = time.clock()
         self.elapsed = self.end - self.start
         
-def quietprint(mystr, verbosity):
+def quietprint(mystr, verbosity=1):
     """Unified entry point for logging and console messages"""
     if  (verbosity <= BUBO_VERBOSITY):  # GLOBAL!
         print mystr
