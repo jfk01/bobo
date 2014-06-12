@@ -28,7 +28,7 @@ class Cache():
         elif os.environ.get('VISYM_CACHE_ROOT') is not None:
             self.setroot(os.environ.get('VISYM_CACHE_ROOT'))
         else:
-            self.setroot(path.join(os.environ['HOME'],'.visym','cache'))
+            self.setroot(path.join(os.environ['HOME'],'.visym'))
         if subdir is not None:
             self.setroot(os.path.join(self.root(), subdir))
         self._maxsize = maxsize
