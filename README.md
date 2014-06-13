@@ -1,22 +1,22 @@
-Project: BUBO - Computer Vision Platform  
+Project: BOBO - Computer Vision Platform  
 Author: Jeffrey Byrne <jeff@visym.com>  
-URL: https://github.com/visym/bubo/  
+URL: https://github.com/visym/bobo/  
 
 Overview
 --------
 
-The BUBO project is a set of matlab and python client tools for distributed stream processing of computer vision tasks.
+The BOBO project is a set of matlab and python client tools for distributed stream processing of computer vision tasks.
 These tools are designed to interface with a Spark cluster for performance analysis of large datasets.
 
 
 Design Goals
 ------------
 
-* BUBO is designed for interactive spark based distributed processing of large computer vision datasets 
-* BUBO is designed for researchers performing analysis of large image datasets
-* BUBO provides a tools for typical computer vision performance evaluations (object recognition and detection)
-* BUBO is designed for easy deployment of vision tasks on a spark production cluster
-* BUBO is open source and written in python and C++, and designed for iPython interactive usage
+* BOBO is designed for interactive spark based distributed processing of large computer vision datasets 
+* BOBO is designed for researchers performing analysis of large image datasets
+* BOBO provides a tools for typical computer vision performance evaluations (object recognition and detection)
+* BOBO is designed for easy deployment of vision tasks on a spark production cluster
+* BOBO is open source and written in python and C++, and designed for iPython interactive usage
 
 
 Supported Datasets
@@ -37,9 +37,12 @@ Supported Datasets
 
 Dependencies
 ------------
-Required: numpy, opencv, matplotlib, sklearn  
+Required: numpy, opencv, matplotlib, sklearn, h5py, pylab  
 Optional: flickrapi, nltk, pygame  
 
+Dataset Dependencies
+-
+nltk.download() wordnet corpus
 
 
 
