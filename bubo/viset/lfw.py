@@ -31,7 +31,7 @@ def export(outdir=None):
         cache.setroot(outdir)
         
     # Fetch tarfile for construction
-    cache.unpack(cache.get(URL), unpackto=None, sha1=None, cleanup=False)
+    cache.unpack(cache.get(URL, sha1=SHA1), unpackto=None, cleanup=False)
     outfile = os.path.join(cache.root(), '%s.csv' % VISET)
             
     # Write images and annotations
