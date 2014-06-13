@@ -10,6 +10,9 @@ DEV_IMAGES_URL = 'http://www.cs.columbia.edu/CAVE/databases/pubfig/download/dev_
 EVAL_IMAGES_URL = 'http://www.cs.columbia.edu/CAVE/databases/pubfig/download/eval_urls.txt'
 VISET = 'pubfig'
 
+DEV_IMAGES_SHA1 = '9eb10c01d46c5d06a8f70b9b8a9ff6b8fe4b0e41';
+EVAL_IMAGES_SHA1 = '0fd4cfc464993909c45f9bce1322747c9a9baef9';
+
 cache = Cache(subdir=VISET)
 
 def stream(outdir=None):
@@ -28,8 +31,8 @@ def export(outdir=None):
         cache.setroot(outdir)
     
     # Fetch text files
-    txt_dev_images = cache.get(DEV_IMAGES_URL)
-    txt_eval_images = cache.get(EVAL_IMAGES_URL)
+    txt_dev_images = cache.get(DEV_IMAGES_URL, sha1=DEV_IMAGES_SHA1)
+    txt_eval_images = cache.get(EVAL_IMAGES_URL, sha1=EVAL_IMAGES_SHA1)
 
     # Output file
     outfile = os.path.join(cache.root(), '%s.csv' % VISET)
