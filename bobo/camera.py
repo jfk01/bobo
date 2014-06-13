@@ -6,7 +6,7 @@ import numpy
 import urllib
 import timeit
 import time
-import bubo.util
+import bobo.util
 import tempfile
 import multiprocessing
 import signal 

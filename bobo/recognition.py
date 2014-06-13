@@ -1,27 +1,40 @@
 import os
 from bobo.cache import Cache
+from pyspark.mllib.clustering import KMeans
+import numpy as np
+from bobo.matlab import randn
 
-def bag_of_words(imtrain, imtest, features, outdir):
-    cache = Cache(subdir=outdir)
+def _features(line=None):
+    return np.array( np.reshape(randn(1,128), 128) )
+
+def bagofwords(imtrain, imtest=None, features=_features, outdir=None):
+    cache = Cache(cacheroot=outdir)
 
     # Unique labels
-    labels = imtrain.unique()
+    labels = imtrain.map(lambda x: x.category).distinct().collect()
+    print labels
+
+    # Features: each returns a row array of features 
+    X = imtrain.map(features)  
     
-    # Training 
-    # generate features by mapping on imtrain
-    
-    # run kmeans clustering to generate words
-    c = spark.mlib.kmeans()
+    # Clustering: kmeans clustering to generate words
+    # http://spark.apache.org/docs/0.9.0/mllib-guide.html
+    model = KMeans.train(X, 2, maxIterations=10, runs=30, initializationMode='random')
     
     # construct bag of words representation
-    #bobo.recognition.
+    print model.clusterCenters
     
     # One vs. rest linear svm
-    for lbl in labels:
-        c = spark.mlib.svm()    
+    #for lbl in labels:
+    #    c = spark.mlib.svm()    
     
     # Return testing results
-    if imtest is not None:
-        pass
+    #if imtest is not None:
+    #    pass
 
     # Intermediate results are stored to cache
+
+
+
+    
+

@@ -5,6 +5,11 @@ from bobo.util import isnumpy, quietprint, isstring, tempcsv
 import httplib, urllib2
 
 
+def rdd(obj):
+    """sc.parallelize on native datatype to convert list into parallelizable construct"""
+    return sc.parallelize(obj)
+    
+
 def export(objlist, outfile=None):
     if outfile is None:
         outfile = tempcsv()
@@ -86,6 +91,16 @@ class ImageCategory():
         else:
             return str('<bobo.image.imcategory: uri="%s", category="%s">' % (self.cachedimage.uri, self.category))            
 
+    def __eq__(self, other):
+        return self.category.lower() == other.category.lower()
+
+    def __ne__(self, other):
+        return self.category.lower() != other.category.lower()
+
+    
+    def __hash__(self):
+        return hash(self.category.lower())
+                
     def parse(self, row):
         """Parse a row from a viset csv textfile into image and category"""
         rowlist = row.encode('utf-8').split()

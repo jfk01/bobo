@@ -16,6 +16,13 @@ SUBDIR = 'lfw'
 
 cache = Cache(subdir=VISET)
 
+
+def tinystream():
+    csvfile = os.path.join(cache.root(), '%s.csv' % VISET)    
+    trainPeople = ['Tom_Cruise','Harrison_Ford']
+    imstream = ImageCategoryStream(csvfile, cache=Cache(subdir=VISET))
+    trainset = [im for im in imstream if any(substr in im.cachedimage.uri for substr in trainPeople)]
+    return trainset
     
 def stream(outdir=None):
     if outdir is not None:
