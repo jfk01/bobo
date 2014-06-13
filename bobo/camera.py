@@ -11,7 +11,7 @@ import tempfile
 import multiprocessing
 import signal 
 import sys
-from bubo.util import imresize
+from bobo.util import imresize, tempimage
 
 
 def _captureloop(imqueue):
@@ -61,7 +61,7 @@ class Webcam(Camera):
             im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         if self.FRAMERATE:
             self.TOC = timeit.default_timer()
-            print '[bubo.camera]: frame rate = ' + str(round(1.0/(self.TOC-self.TIC),1)) + ' Hz'
+            print '[bobo.camera]: frame rate = ' + str(round(1.0/(self.TOC-self.TIC),1)) + ' Hz'
             self.TIC = self.TOC
         return im
 
@@ -82,7 +82,7 @@ class MotionStereo(Webcam):
     
 class Ipcam(Camera):
     TMPFILE = None
-    def __init__(self, url, imfile=bubo.util.tempimage()):
+    def __init__(self, url, imfile=tempimage()):
         self.CAM = url
         self.TMPFILE = imfile
     

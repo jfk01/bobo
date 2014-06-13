@@ -1,5 +1,5 @@
 import os
-from bubo.cache import Cache
+from bobo.cache import Cache
 
 def bag_of_words(imtrain, imtest, features, outdir):
     cache = Cache(subdir=outdir)
@@ -14,7 +14,7 @@ def bag_of_words(imtrain, imtest, features, outdir):
     c = spark.mlib.kmeans()
     
     # construct bag of words representation
-    #bubo.recognition.
+    #bobo.recognition.
     
     # One vs. rest linear svm
     for lbl in labels:

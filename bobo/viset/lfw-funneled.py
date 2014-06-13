@@ -1,4 +1,4 @@
-from bubo.viset import lfw
+from bobo.viset import lfw
 
 lfw.URL = 'http://vis-www.cs.umass.edu/lfw/lfw-funneled.tgz'
 lfw.SHA1 = None

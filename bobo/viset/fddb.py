@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.util import remkdir, isstring
-from bubo.image import ImageDetectionStream
+from bobo.cache import Cache
+from bobo.util import remkdir, isstring
+from bobo.image import ImageDetectionStream
 
 URL = 'http://tamaraberg.com/faceDataset/originalPics.tar.gz'
 URL_ANNO = 'http://vis-www.cs.umass.edu/fddb/FDDB-folds.tgz'

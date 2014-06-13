@@ -1,5 +1,5 @@
-from bubo.cache import Cache
-from bubo.viset import lfw
+from bobo.cache import Cache
+from bobo.viset import lfw
 
 lfw.URL = 'http://vis-www.cs.umass.edu/lfw/lfw-deepfunneled.tgz'
 lfw.SHA1 = None

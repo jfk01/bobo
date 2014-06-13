@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.video import VideoCategoryStream
-from bubo.util import remkdir, isexe
+from bobo.cache import Cache
+from bobo.video import VideoCategoryStream
+from bobo.util import remkdir, isexe
 
 URL = 'http://serre-lab.clps.brown.edu/wp-content/uploads/2013/10/hmdb51_org.rar'
 SHA1 = None
@@ -58,7 +58,7 @@ def export(outdir=None, clean=False):
     
     # Check for frame export utility
     #if not isexe('ffmpeg'):
-    #    raise IOError('[bubo.viset.hmdb]: ffmpeg not found on path')
+    #    raise IOError('[bobo.viset.hmdb]: ffmpeg not found on path')
                     
 
 def stream(outdir=None):

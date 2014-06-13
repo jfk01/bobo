@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.video import VideoCategoryStream
-from bubo.util import remkdir, isexe
+from bobo.cache import Cache
+from bobo.video import VideoCategoryStream
+from bobo.util import remkdir, isexe
 
 URLS = ['http://www.nada.kth.se/cvap/actions/walking.zip',
         'http://www.nada.kth.se/cvap/actions/jogging.zip',
@@ -51,16 +51,16 @@ def export(outdir=None, clean=False):
     if clean:
         cache.clean()
     elif os.path.isfile(outfile):
-        print '[bubo.viset.kthactions]: exporting "%s"' % outfile
+        print '[bobo.viset.kthactions]: exporting "%s"' % outfile
         return outfile
                         
-    print '[bubo.viset.kthactions][WARNING]: downloads will not show percent progress since content length is unknown'
+    print '[bobo.viset.kthactions][WARNING]: downloads will not show percent progress since content length is unknown'
     for (url, label, sha1) in zip(URLS, LABELS, SHA1):
         cache.unpack(cache.get(url, sha1), cache.abspath(label), cleanup=False)
 
     # Check for frame export utility
     #if not isexe('ffmpeg'):
-    #    raise IOError('[bubo.viset.kthactions]: ffmpeg not found on path')
+    #    raise IOError('[bobo.viset.kthactions]: ffmpeg not found on path')
                     
     # Video list
     with open(outfile, 'wb') as csvfile:
@@ -71,7 +71,7 @@ def export(outdir=None, clean=False):
                     [avibase,ext] = os.path.splitext(filename)
                     if ext == '.avi':
                         imdir = cache.abspath(os.path.join(category, avibase))                        
-                        print '[bubo.viset.kthactions]: exporting "%s" to "%s"' % (filename, imdir)
+                        print '[bobo.viset.kthactions]: exporting "%s" to "%s"' % (filename, imdir)
                         f.writerow([os.path.join(category, avibase, 'im_%08d.png'), category]);                                        
                         cmd = "ffmpeg -i \'%s\' %s/im_%%08d.png &> /dev/null" % (os.path.join(cache.root(), category, filename), imdir)
                         remkdir(imdir)                        

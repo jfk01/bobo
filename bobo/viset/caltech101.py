@@ -1,7 +1,7 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.image import ImageCategoryStream
+from bobo.cache import Cache
+from bobo.image import ImageCategoryStream
 
 URL = 'http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz'
 SHA1 = 'b8ca4fe15bcd0921dfda882bd6052807e63b4c96'

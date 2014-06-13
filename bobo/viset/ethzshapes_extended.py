@@ -1,5 +1,5 @@
-from bubo.cache import Cache
-from bubo.viset import ethzshapes
+from bobo.cache import Cache
+from bobo.viset import ethzshapes
 
 ethzshapes.URL = 'http://www.vision.ee.ethz.ch/datasets/downloads/extended_ethz_shapes.tgz'
 ethzshapes.SHA1 = None

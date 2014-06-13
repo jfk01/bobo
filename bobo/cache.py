@@ -5,8 +5,8 @@ from os import path
 import hashlib
 import numpy
 import urlparse
-from bubo.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir, splitextension
-import bubo.viset.download
+from bobo.util import isarchive, isurl, isimg, ishdf5, isfile, quietprint, isnumpy, isstring, remkdir, splitextension
+import bobo.viset.download
 import pylab
 import string
 import shutil
@@ -25,8 +25,8 @@ class Cache():
     def __init__(self, cacheroot=None, maxsize=10E9, verbose=True, strategy='lru', refetch=False, subdir=None):
         if cacheroot is not None:
             self.setroot(cacheroot)
-        elif os.environ.get('BUBO_CACHE') is not None:
-            self.setroot(os.environ.get('BUBO_CACHE'))
+        elif os.environ.get('BOBO_CACHE') is not None:
+            self.setroot(os.environ.get('BOBO_CACHE'))
         else:
             self.setroot(path.join(os.environ['HOME'],'.visym'))
         if subdir is not None:
@@ -35,7 +35,7 @@ class Cache():
         self._verbose = verbose
         self._strategy = strategy
         self._refetch = refetch
-        #quietprint('[bubo.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
+        #quietprint('[bobo.cache]: initializing cache with root directory "%s"' % self.root(), verbose)
         
     def __len__(self):
         if self._cachesize is not None:
@@ -44,7 +44,7 @@ class Cache():
             return self.size()
         
     def __repr__(self):
-        return str('<bubo.cache: cachedir=' + str(self.root()) + '\'>')
+        return str('<bobo.cache: cachedir=' + str(self.root()) + '\'>')
     
     def __getitem__(self, uri):
         return self.get(uri)
@@ -59,7 +59,7 @@ class Cache():
         filename = self.abspath(self.key(urlparse.urldefrag(url)[0]))
         url_scheme = urlparse.urlparse(url)[0]
         if url_scheme in ['http', 'https']:
-            bubo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout, sha1=None)                       
+            bobo.viset.download.download(url, filename, verbose=self._verbose, timeout=timeout, sha1=None)                       
         elif url_scheme == 'file':
             shutil.copyfile(url, filename)
         elif url_scheme == 'hdfs':
@@ -67,7 +67,7 @@ class Cache():
         else:
             raise NotImplementedError('FIXME: support for URL scheme ' + url_scheme)
         if sha1 is not None:
-            bubo.download.verify_sha1(filename, sha1)
+            bobo.download.verify_sha1(filename, sha1)
         return filename        
 
     def _hash(self, url, prettyhash=_prettyhash):
@@ -88,8 +88,8 @@ class Cache():
         if self._free_ctr == 0:
             if self._cachesize is not None:
                 if self._cachesize.get() > self._maxsize:
-                    print '[bubo.cache][WARNING]: cachesize is larger than maximum.  Clean resources!'
-            quietprint('[bubo.cache]: spawning cache garbage collection process')
+                    print '[bobo.cache][WARNING]: cachesize is larger than maximum.  Clean resources!'
+            quietprint('[bobo.cache]: spawning cache garbage collection process')
             self._cachesize = Pool(1).apply_async(self.size(), self.root())
             self._free_ctr = self._free_maxctr
         self._free_ctr -= 1
@@ -103,18 +103,18 @@ class Cache():
         if key is None:
             key = self.key(obj)        
         if self.iscached(key):
-            raise CacheError('[bubo.cache][Error]: Key collision! Existing object in cache with key "%s"' % key)
+            raise CacheError('[bobo.cache][Error]: Key collision! Existing object in cache with key "%s"' % key)
             
         # Numpy object - export to file in cache with provided key
         if isnumpy(obj):
-            quietprint('[bubo.cache][PUT]: Exporting numpy object to cache with key "' + key + '"')                                                                             
+            quietprint('[bobo.cache][PUT]: Exporting numpy object to cache with key "' + key + '"')                                                                             
             f = h5py.File(self.abspath(key), 'a')
             f[key] = obj
             f.close()
 
         # URL - download and save to cache with provided key
         elif isurl(obj):
-            quietprint('[bubo.cache][PUT]: "%s" key "%s"' % (obj, key))                                                                                             
+            quietprint('[bobo.cache][PUT]: "%s" key "%s"' % (obj, key))                                                                                             
             filename = self._download(obj, timeout=timeout)
             shutil.move(filename, self.abspath(key))
 
@@ -122,7 +122,7 @@ class Cache():
             
         # Unsupported type!
         else:
-            raise CacheError('[bubo.cache][ERROR]: Unsupported object type for PUT')
+            raise CacheError('[bobo.cache][ERROR]: Unsupported object type for PUT')
             
         # Return cache key 
         return key        
@@ -131,24 +131,24 @@ class Cache():
         """Get the value associated with a key from the cache and return object""" 
         if self.iscached(uri) and self._iskey(uri):
             # URI is a cache key, return absolute filename in cache 
-            quietprint('[bubo.cache][HIT]: key "%s" ' % (uri))      
+            quietprint('[bobo.cache][HIT]: key "%s" ' % (uri))      
             filename = self.abspath(uri)                
         elif self.iscached(uri):
             # Convert URI to cache key, return absolute filename in cache
-            quietprint('[bubo.cache][HIT]: "%s" key "%s" ' % (uri, self.key(uri)))
+            quietprint('[bobo.cache][HIT]: "%s" key "%s" ' % (uri, self.key(uri)))
             filename = self.abspath(self.key(uri))  
-        elif bubo.util.isurl(uri):
-            quietprint('[bubo.cache][MISS]: downloading "%s"... ' % (uri))  
+        elif bobo.util.isurl(uri):
+            quietprint('[bobo.cache][MISS]: downloading "%s"... ' % (uri))  
             self.discard(uri)
             filename = self.abspath(self.put(uri))
         else:
-            raise CacheError('[bubo.cache][ERROR]: invalid uri "%s"' % uri)
+            raise CacheError('[bobo.cache][ERROR]: invalid uri "%s"' % uri)
         
         # SHA1 check?
         if sha1 is not None:
-            quietprint('[bubo.cache]: Verifying SHA1... ')                          
-            if not bubo.viset.download.verify_sha1(filename, sha1):
-                quietprint('[bubo.cache][ERROR]: invalid SHA1 - discarding and refetching... ')  
+            quietprint('[bobo.cache]: Verifying SHA1... ')                          
+            if not bobo.viset.download.verify_sha1(filename, sha1):
+                quietprint('[bobo.cache][ERROR]: invalid SHA1 - discarding and refetching... ')  
                 self.discard(uri)            
                 self.get(uri, sha1)  # discard and try again
         
@@ -158,14 +158,14 @@ class Cache():
     def discard(self, uri):
         """Delete single url from cache"""
         if self.iscached(uri):
-            quietprint('[bubo.cache]: Removing key "%s" ' % (self.key(uri)))
+            quietprint('[bobo.cache]: Removing key "%s" ' % (self.key(uri)))
             if os.path.isfile(self.abspath(self.key(uri))):
                 os.remove(self.abspath(self.key(uri)))
         elif os.path.isdir(self.abspath(uri)):
-            quietprint('[bubo.cache]: Removing cached directory "%s" ' % (uri))
+            quietprint('[bobo.cache]: Removing cached directory "%s" ' % (uri))
             shutil.rmtree(self.abspath(self.cacheid(url)))
         else:
-            #quietprint('[bubo.cache][WARNING]: Key not found "%s" ' % (self.key(uri)))            
+            #quietprint('[bobo.cache][WARNING]: Key not found "%s" ' % (self.key(uri)))            
             pass
 
     def load(self, uri):
@@ -179,13 +179,13 @@ class Cache():
             try:
                 obj = pylab.imread(filename)
             except:
-                raise CacheError('[bubo.cache][ERROR]: unsupported object type for loading key "%s" ' % self.key(uri))
+                raise CacheError('[bobo.cache][ERROR]: unsupported object type for loading key "%s" ' % self.key(uri))
         return obj
         
             
     def delete(self):
         """Delete entire cache"""
-        quietprint('[bubo.cache]: Deleting all cached data in "' + self.root() + '"')
+        quietprint('[bobo.cache]: Deleting all cached data in "' + self.root() + '"')
         shutil.rmtree(self.root())
         os.makedirs(self.root())        
 
@@ -246,7 +246,7 @@ class Cache():
         elif isstring(obj):
             key = obj   # Use arbitrary string if not file or url
         else:
-            raise CacheError('[bubo.cache][ERROR]: Unsupported object for constructing key')
+            raise CacheError('[bobo.cache][ERROR]: Unsupported object for constructing key')
         return key
         
     def abspath(self, key):
@@ -262,7 +262,7 @@ class Cache():
     def unpack(self, pkgkey, unpackto=None, sha1=None, cleanup=False):
         """Extract archive file to unpackdir directory, delete archive file and return archive directory"""
         if not self.iscached(pkgkey):
-            raise CacheError('[bubo.cache][ERROR]: Key not found "%s" ' % pkgkey)
+            raise CacheError('[bobo.cache][ERROR]: Key not found "%s" ' % pkgkey)
         filename = self.abspath(pkgkey)
         if isarchive(filename):
             # unpack directory is the same directory as filename
@@ -272,13 +272,13 @@ class Cache():
                 unpackdir = self.abspath(unpackto)
             if not path.exists(unpackdir):
                 os.makedirs(unpackdir)
-            bubo.viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)                
+            bobo.viset.download.extract(filename, unpackdir, sha1=sha1, verbose=self._verbose)                
             if cleanup:
-                quietprint('[bubo.cache]: Deleting archive "%s" ' % (pkgkey))                                
+                quietprint('[bobo.cache]: Deleting archive "%s" ' % (pkgkey))                                
                 os.remove(filename)
             return unpackdir
         else:
-            raise CacheError('[bubo.cache][ERROR]: Key not archive "%s" ' % pkgkey)            
+            raise CacheError('[bobo.cache][ERROR]: Key not archive "%s" ' % pkgkey)            
 
 class CacheError(Exception):
     pass
@@ -303,7 +303,7 @@ class CachedObject(object):
         return self.obj
         
     def __repr__(self):
-        return str('<bubo.cache: obj=' + str(type(self.obj)) + ', cached=' + str(self._cache.iscached(self.uri)) + ', key=\'' + str(self._cache.key(self.uri)) + '\'>')
+        return str('<bobo.cache: obj=' + str(type(self.obj)) + ', cached=' + str(self._cache.iscached(self.uri)) + ', key=\'' + str(self._cache.key(self.uri)) + '\'>')
 
     
     def size(self):

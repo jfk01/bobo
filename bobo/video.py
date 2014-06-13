@@ -1,13 +1,13 @@
 import csv, os
-from bubo.cache import CachedObject, Cache, CacheError
-from bubo.show import imshow, imbbox
-from bubo.util import isnumpy, quietprint, isstring, isvideo, tempcsv
+from bobo.cache import CachedObject, Cache, CacheError
+from bobo.show import imshow, imbbox
+from bobo.util import isnumpy, quietprint, isstring, isvideo, tempcsv
 import httplib, urllib2
-from bubo.image import ImageCategory
+from bobo.image import ImageCategory
 
 
 def export(objlist, outfile=None):
-    """Export a list of bubo.video objects to a CSV file for external consumption"""
+    """Export a list of bobo.video objects to a CSV file for external consumption"""
     if outfile is None:
         outfile = tempcsv()
     with open(outfile, 'wb') as csvobj:
@@ -28,7 +28,7 @@ class Video():
         self.cache = cache
         
     def __repr__(self):
-        return str('<bubo.video: uri="%s">' % (self.cache.abspath(self.imframe)))
+        return str('<bobo.video: uri="%s">' % (self.cache.abspath(self.imframe)))
 
     
 class VideoCategory():
@@ -44,7 +44,7 @@ class VideoCategory():
         self.frame = 1
         
     def __repr__(self):
-        return str('<bubo.video: uri="%s", category="%s">' % (self.cache.abspath(self.uri), self.category))
+        return str('<bobo.video: uri="%s", category="%s">' % (self.cache.abspath(self.uri), self.category))
 
     def parse(self, row):
         """Parse a row from a viset csv textfile into image and category"""

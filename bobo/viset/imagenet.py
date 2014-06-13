@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.util import remkdir, isstring
-from bubo.image import ImageCategoryStream
+from bobo.cache import Cache
+from bobo.util import remkdir, isstring
+from bobo.image import ImageCategoryStream
 from nltk.corpus import wordnet
 
 URL = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
@@ -56,9 +56,9 @@ def export(outdir=None):
                     raise
 
                 if (k % 10000) == 0:
-                    print '[bubo.viset.imagenet][%d/14200000]: exporting "%s"' % (k, url.encode('utf-8'))
+                    print '[bobo.viset.imagenet][%d/14200000]: exporting "%s"' % (k, url.encode('utf-8'))
     else:
-        print '[bubo.viset.imagenet]: returning cached viset file "%s"' % (outfile)        
+        print '[bobo.viset.imagenet]: returning cached viset file "%s"' % (outfile)        
 
     # Done!
     return outfile

@@ -5,7 +5,7 @@ import sys
 from time import sleep
 import signal
 import matplotlib.cm as cm 
-from bubo.util import temppng
+from bobo.util import temppng
 
 
 WINDOWSTATE = {'focus':None, 'windows':{}}

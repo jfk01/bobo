@@ -13,7 +13,7 @@ from urllib2 import urlopen
 from os import path
 import hashlib
 import sys
-import bubo.util
+import bobo.util
 import archive
 import os
 
@@ -52,7 +52,7 @@ def download(url, output_filename, sha1=None, verbose=True, md5=None, timeout=No
     dl_size = 0
 
     if verbose:
-        print "[bubo.cache]: Downloading '%s' to '%s'" % (url, output_filename)
+        print "[bobo.cache]: Downloading '%s' to '%s'" % (url, output_filename)
     # display  progress only if we know the length
     if 'content-length' in page_info and verbose:
         # file size in Kilobytes
@@ -106,7 +106,7 @@ def extract(archive_filename, output_dirname, sha1=None, verbose=True):
     * gzip compressed files
     """
     if verbose:
-        print "[bubo.cache]: Extracting '%s' to '%s'" % (archive_filename, output_dirname)
+        print "[bobo.cache]: Extracting '%s' to '%s'" % (archive_filename, output_dirname)
     if sha1 is not None:
         if verbose:
             print " SHA-1 verification..."
@@ -134,7 +134,7 @@ def extract_and_cleanup(archive_filename, output_dirname, sha1=None, verbose=Tru
     os.remove(path.join(output_dirname, path.basename(url)))
     
 def cache_and_extract(url, output_dirname, sha1=None, verbose=True):
-    if not bubo.util.isfile(path.join(output_dirname, path.basename(url))):
+    if not bobo.util.isfile(path.join(output_dirname, path.basename(url))):
         download_and_extract(url, output_dirname, sha1, verbose)
         
 

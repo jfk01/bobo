@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.util import remkdir, isstring
-from bubo.image import ImageDetectionStream
+from bobo.cache import Cache
+from bobo.util import remkdir, isstring
+from bobo.image import ImageDetectionStream
 import numpy as np
 
 URL = 'http://www.vision.ee.ethz.ch/datasets/downloads/ethz_shape_classes_v12.tgz'

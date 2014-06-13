@@ -4,7 +4,7 @@ import multiprocessing
 import sys
 import os
 import numpy as np
-from bubo.util import bgr2rgb, numpy2iplimage
+from bobo.util import bgr2rgb, numpy2iplimage
 import cv2
 import cv2.cv as cv
 import signal

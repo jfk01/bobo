@@ -1,14 +1,14 @@
 import os
 import csv
-from bubo.cache import Cache
+from bobo.cache import Cache
 import numpy as np
-from bubo.util import isfile, remkdir
+from bobo.util import isfile, remkdir
 import gzip, struct
 from array import array
 import numpy
 import urlparse
 import cv2
-from bubo.image import ImageCategoryStream
+from bobo.image import ImageCategoryStream
 
 TRAIN_IMG_URL = 'http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz'
 TRAIN_IMG_SHA1 =  '6c95f4b05d2bf285e1bfb0e7960c31bd3b3f8a7d'
@@ -82,7 +82,7 @@ def export(outdir=None):
                 cv2.imwrite(imfile, im)
                 f.writerow([imfile, str(y_train[k]), str(y_train[k])])
                 if (k % 100) == 0:
-                    print '[bubo.viset.mnist][%d/%d]: exporting training image to "%s"' % (k, 60000, imfile)
+                    print '[bobo.viset.mnist][%d/%d]: exporting training image to "%s"' % (k, 60000, imfile)
 
         with gzip.open(test_img_file, 'rb') as gzfile:
             magic, size, rows, cols = struct.unpack(">IIII", gzfile.read(16))
@@ -97,7 +97,7 @@ def export(outdir=None):
                 cv2.imwrite(imfile, im)
                 f.writerow([imfile, str(y_test[k]), str(y_test[k])])            
                 if (k % 100) == 0:            
-                    print '[bubo.viset.mnist][%d/%d]: exporting testing image to "%s"' % (k, 10000, imfile)
+                    print '[bobo.viset.mnist][%d/%d]: exporting testing image to "%s"' % (k, 10000, imfile)
       
     # Cleanup
     return outfile

@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.util import remkdir, isstring
-from bubo.image import ImageCategoryStream
+from bobo.cache import Cache
+from bobo.util import remkdir, isstring
+from bobo.image import ImageCategoryStream
 
 URL = 'http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2012/VOCtrainval_11-May-2012.tar'
 SHA1 = None

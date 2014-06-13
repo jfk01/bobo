@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.util import remkdir
-from bubo.image import ImageCategoryStream
+from bobo.cache import Cache
+from bobo.util import remkdir
+from bobo.image import ImageCategoryStream
 
 DEV_IMAGES_URL = 'http://www.cs.columbia.edu/CAVE/databases/pubfig/download/dev_urls.txt'
 #DEV_PEOPLE_URL = 'http://www.cs.columbia.edu/CAVE/databases/pubfig/download/dev_people.txt'

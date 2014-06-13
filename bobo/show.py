@@ -1,10 +1,10 @@
 import importlib
 
-BACKEND = importlib.import_module('bubo.gui.using_matplotlib')
+BACKEND = importlib.import_module('bobo.gui.using_matplotlib')
 
 def backend(using='pygame'):
     global BACKEND
-    BACKEND = importlib.import_module('bubo.gui.using_%s' % using)
+    BACKEND = importlib.import_module('bobo.gui.using_%s' % using)
     if using == 'pygame':
         figure()  # need figure before opencv camera otherwise segfault. Why?
     

@@ -1,7 +1,7 @@
 import csv, os
-from bubo.cache import CachedObject, Cache, CacheError
-from bubo.show import imshow, imbbox
-from bubo.util import isnumpy, quietprint, isstring, tempcsv
+from bobo.cache import CachedObject, Cache, CacheError
+from bobo.show import imshow, imbbox
+from bobo.util import isnumpy, quietprint, isstring, tempcsv
 import httplib, urllib2
 
 
@@ -29,9 +29,9 @@ class Image():
         
     def __repr__(self):
         if self.image is not None:
-            return str('<bubo.image: image=(%d,%d)>' % (self.image.shape[0], self.image.shape[1]))
+            return str('<bobo.image: image=(%d,%d)>' % (self.image.shape[0], self.image.shape[1]))
         else:
-            return str('<bubo.image: uri="%s">' % (self.cachedimage.uri))            
+            return str('<bobo.image: uri="%s">' % (self.cachedimage.uri))            
 
     def parse(self, row):
         """Parse a row from a viset csv textfile into image"""
@@ -45,17 +45,17 @@ class Image():
             return self.image
         elif self.cachedimage is not None:
             try:
-                quietprint('[bubo.image]: loading "%s"'% self.cachedimage.uri, True);                
+                quietprint('[bobo.image]: loading "%s"'% self.cachedimage.uri, True);                
                 self.image = self.cachedimage.load()
             except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
-                quietprint('[bubo.image][WARNING]: download failed - ignoring image', True);
+                quietprint('[bobo.image][WARNING]: download failed - ignoring image', True);
             except CacheError:
-                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);                
+                quietprint('[bobo.image][WARNING]: cache error during download - ignoring image', True);                
             except IOError:
-                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);                
+                quietprint('[bobo.image][WARNING]: IO error during download - ignoring image', True);                
             except:
                 #raise
-                quietprint('[bubo.image][WARNING]: error during download - ignoring image', True);                
+                quietprint('[bobo.image][WARNING]: error during download - ignoring image', True);                
                 pass
                 
             return self.image
@@ -82,9 +82,9 @@ class ImageCategory():
         
     def __repr__(self):
         if self.image is not None:
-            return str('<bubo.image.imcategory: image=(%d,%d), category="%s">' % (self.image.shape[0], self.image.shape[1], self.category))
+            return str('<bobo.image.imcategory: image=(%d,%d), category="%s">' % (self.image.shape[0], self.image.shape[1], self.category))
         else:
-            return str('<bubo.image.imcategory: uri="%s", category="%s">' % (self.cachedimage.uri, self.category))            
+            return str('<bobo.image.imcategory: uri="%s", category="%s">' % (self.cachedimage.uri, self.category))            
 
     def parse(self, row):
         """Parse a row from a viset csv textfile into image and category"""
@@ -100,20 +100,20 @@ class ImageCategory():
             return self.image
         elif self.cachedimage is not None:
             try:
-                quietprint('[bubo.image]: loading "%s"'% self.cachedimage.uri, True);                
+                quietprint('[bobo.image]: loading "%s"'% self.cachedimage.uri, True);                
                 self.image = self.cachedimage.load()
                 if self.cachedimage.size() < 10000:
-                    quietprint('[bubo.image][WARNING]: invalid download size - ignoring image', True);                                    
+                    quietprint('[bobo.image][WARNING]: invalid download size - ignoring image', True);                                    
                     os.remove(self.cachedimage.filename())
                     return None
             except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
-                quietprint('[bubo.image][WARNING]: download failed - ignoring image', True);
+                quietprint('[bobo.image][WARNING]: download failed - ignoring image', True);
                 self.cachedimage.discard()                
             except CacheError:
-                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);
+                quietprint('[bobo.image][WARNING]: cache error during download - ignoring image', True);
                 self.cachedimage.discard()                
             except IOError:
-                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);
+                quietprint('[bobo.image][WARNING]: IO error during download - ignoring image', True);
                 self.cachedimage.discard()                
             except:
                 raise
@@ -195,9 +195,9 @@ class ImageDetection():
         
     def __repr__(self):
         if self.image is not None:
-            return str('<bubo.image.imdetection: image=(%d,%d), category="%s, bbox=(%d,%d,%d,%d)">' % (self.image.shape[0], self.image.shape[1], self.category, self.xmin,self.ymin,self.xmax,self.ymax))
+            return str('<bobo.image.imdetection: image=(%d,%d), category="%s, bbox=(%d,%d,%d,%d)">' % (self.image.shape[0], self.image.shape[1], self.category, self.xmin,self.ymin,self.xmax,self.ymax))
         else:
-            return str('<bubo.image.imdetection: uri="%s", category="%s", bbox=(%d,%d,%d,%d)">' % (self.image.shape[0], self.image.shape[1], self.category, self.xmin,self.ymin,self.xmax,self.ymax))
+            return str('<bobo.image.imdetection: uri="%s", category="%s", bbox=(%d,%d,%d,%d)">' % (self.image.shape[0], self.image.shape[1], self.category, self.xmin,self.ymin,self.xmax,self.ymax))
 
     def parse(self, row):
         """Parse a row from a viset csv textfile into image and category"""
@@ -217,14 +217,14 @@ class ImageDetection():
             return self.image
         elif self.cachedimage is not None:
             try:
-                quietprint('[bubo.image]: loading "%s"'% self.cachedimage.uri, True);                
+                quietprint('[bobo.image]: loading "%s"'% self.cachedimage.uri, True);                
                 self.image = self.cachedimage.load()
             except (httplib.BadStatusLine, urllib2.URLError, urllib2.HTTPError):
-                quietprint('[bubo.image][WARNING]: download failed - ignoring image', True);
+                quietprint('[bobo.image][WARNING]: download failed - ignoring image', True);
             except CacheError:
-                quietprint('[bubo.image][WARNING]: cache error during download - ignoring image', True);                
+                quietprint('[bobo.image][WARNING]: cache error during download - ignoring image', True);                
             except IOError:
-                quietprint('[bubo.image][WARNING]: IO error during download - ignoring image', True);                
+                quietprint('[bobo.image][WARNING]: IO error during download - ignoring image', True);                
             except:
                 raise
                 

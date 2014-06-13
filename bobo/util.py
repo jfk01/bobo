@@ -11,16 +11,16 @@ from time import gmtime, strftime, localtime
 import sys
 import csv
 import hashlib
-import bubo.viset
+import bobo.viset
 
-global BUBO_VERBOSITY
-BUBO_VERBOSITY = 1
+global BOBO_VERBOSITY
+BOBO_VERBOSITY = 1
 
 
 def viset(visetname):
     """Dynamically import requested vision dataset module"""
     try:
-        obj = __import__("bubo.viset.%s" % visetname, fromlist=["bubo.viset"])
+        obj = __import__("bobo.viset.%s" % visetname, fromlist=["bobo.viset"])
     except ImportError:
         raise ValueError('Undefined viset "%s"' % visetname)
     return obj
@@ -63,7 +63,7 @@ def uniform_random_in_range(rng=(0,1)):
     return (rng[1] - rng[0]) * np.random.random_sample() + rng[0]
 
 
-# <MOVED> tO bubo.geometry
+# <MOVED> tO bobo.geometry
 def similarity_imtransform(txy=(0,0), r=0, s=1):
     R = np.mat([[np.cos(r), -np.sin(r), 0], [np.sin(r), np.cos(r), 0], [0,0,1]])
     S = np.mat([[s,0,0], [0, s, 0], [0,0,1]])

@@ -1,8 +1,8 @@
 import os
 import csv
-from bubo.cache import Cache
-from bubo.util import remkdir, isstring
-from bubo.image import ImageCategoryStream
+from bobo.cache import Cache
+from bobo.util import remkdir, isstring
+from bobo.image import ImageCategoryStream
 
 URL = 'http://vis-www.cs.umass.edu/lfw/lfw.tgz'
 URL_DEEPFUNNEL = 'http://vis-www.cs.umass.edu/lfw/lfw-deepfunneled.tgz'
