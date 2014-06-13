@@ -1,6 +1,6 @@
 import sys
 import argparse
-import bubo.util
+import bobo.util
 
 # Command line options
 parser = argparse.ArgumentParser(description='Download vision datasets')
@@ -9,7 +9,7 @@ parser.add_argument('--outdir', type=str, help='Output directory', default=None)
 args = parser.parse_args()
 
 # Dynamically Import requested vision dataset module
-viset = bubo.util.viset(args.viset)
+viset = bobo.util.viset(args.viset)
 
 # Download and display
 for im in viset.stream(outdir=args.outdir):

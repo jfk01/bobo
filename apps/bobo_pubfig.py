@@ -1,4 +1,4 @@
-from viset.library import pubfig
+from bobo.viset import pubfig
 from pyspark import SparkContext
 
 if 'sc' not in locals():

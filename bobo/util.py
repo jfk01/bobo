@@ -29,8 +29,8 @@ def isexe(path):
     return os.path.isfile(path) and os.access(path, os.X_OK)
 
 def setverbosity(v):
-    global BUBO_VERBOSITY
-    BUBO_VERBOSITY = v  # GLOBAL!
+    global BOBO_VERBOSITY
+    BOBO_VERBOSITY = v  # GLOBAL!
     
 
 def sha1(filename):
@@ -230,7 +230,7 @@ class Stopwatch(object):
         
 def quietprint(mystr, verbosity=1):
     """Unified entry point for logging and console messages"""
-    if  (verbosity <= BUBO_VERBOSITY):  # GLOBAL!
+    if  (verbosity <= BOBO_VERBOSITY):  # GLOBAL!
         print mystr
 
 def isfile(path):

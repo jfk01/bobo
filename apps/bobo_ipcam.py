@@ -1,5 +1,5 @@
-from bubo.camera import Ipcam
-from bubo.show import imshow
+from bobo.camera import Ipcam
+from bobo.show import imshow
 import argparse
 
 parser = argparse.ArgumentParser(description='Display imagery from an IP camera')

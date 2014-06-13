@@ -1,3 +1,3 @@
-import bubo.cache
-bubo.cache.Cache().delete()
+import bobo.cache
+bobo.cache.Cache().delete()
 

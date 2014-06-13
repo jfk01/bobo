@@ -1,8 +1,8 @@
-import bubo.show
-from bubo.camera import Webcam
+import bobo.show
+from bobo.camera import Webcam
 
 # Application
-bubo.show.using('opencv')
+bobo.show.using('opencv')
 for im in Webcam(framerate=True, resize=0.5, grey=False):
-    bubo.show.imshow(im, handle='Webcam')
+    bobo.show.imshow(im, handle='Webcam')
   

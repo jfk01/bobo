@@ -1,4 +1,4 @@
-from bubo.viset import imagenet
+from bobo.viset import imagenet
 from pyspark import SparkContext
 import argparse
 
