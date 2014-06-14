@@ -12,7 +12,7 @@ if isempty(bb_true)
   iou = zeros(1,size(bb_est,1));  return;  
 elseif isempty(bb_est)
   iou = [];  return;
-%elseif ~bubo.bbox.isvalid(bb_true) || ~bubo.bbox.isvalid(bb_est)
+%elseif ~bobo.bbox.isvalid(bb_true) || ~bobo.bbox.isvalid(bb_est)
 %  keyboard
 %  error('invalid bounding box input');
 end
@@ -22,7 +22,7 @@ end
 iou = zeros(size(bb_true,1), size(bb_est,1));
 for i=1:size(bb_true,1)
   for j=i:size(bb_est,1)
-    iou(i,j) = bubo.bbox.intersection_over_union(bb_true(i,:), bb_est(j,:));
+    iou(i,j) = bobo.bbox.intersection_over_union(bb_true(i,:), bb_est(j,:));
   end
 end
 

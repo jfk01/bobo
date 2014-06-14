@@ -24,6 +24,6 @@ cls.auc = info.auc;
 
 %% Plots
 if (do_plot) || (nargout == 0)
-  bubo.show.classification(cls);
+  bobo.show.classification(cls);
 end
 

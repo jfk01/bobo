@@ -13,7 +13,7 @@ viset = bobo.util.viset(args.viset)
 
 # Download and display
 for im in viset.stream(outdir=args.outdir):
-    print '[bubo_download_viset]: category=%s' % im.category    
+    print '[bobo_download_viset]: category=%s' % im.category    
     im.show()    
 
 

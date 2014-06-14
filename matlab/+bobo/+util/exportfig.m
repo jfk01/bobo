@@ -6,7 +6,7 @@ function [filename] = exportfig(filename, h)
 %--------------------------------------------------------------------------
 
 if exist('filename','var')
-  filename = sprintf('fig_%s.png', bubo.util.datefile());
+  filename = sprintf('fig_%s.png', bobo.util.datefile());
 end
 if ~exist('h','var')  
   figure(h);  

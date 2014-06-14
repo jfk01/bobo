@@ -1,4 +1,4 @@
-"""Key metrics for analysis of bubo applications"""
+"""Key metrics for analysis of bobo applications"""
 import sklearn.metrics
     
 def average_precision(y_true, y_pred):

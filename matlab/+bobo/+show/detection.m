@@ -7,7 +7,7 @@ function [det] = detection(det)
 
 %% Inputs
 if ~isstruct(det) || ~isfield(det, 'precision')
-  error('input must be the output from bubo.eval.detection');
+  error('input must be the output from bobo.eval.detection');
 end
 
 

@@ -6,8 +6,8 @@ function [iou] = intersection_over_union(a, b)
 %--------------------------------------------------------------------------
 
 %% Convert from xywh to corners
-a = bubo.bbox.tocorners(a);
-b = bubo.bbox.tocorners(b);
+a = bobo.bbox.tocorners(a);
+b = bobo.bbox.tocorners(b);
 
 
 %% Overlap!

@@ -22,7 +22,7 @@ for k=1:length(BB_est)
   n_est = size(bb_est,1);
   tp{k} = zeros(n_est,1);
   fp{k} = zeros(n_est,1);
-  overlap = bubo.bbox.overlap(bb_true, bb_est);
+  overlap = bobo.bbox.overlap(bb_true, bb_est);
   for j=1:n_est
     j_asgn = find(double(overlap(:,j) >= min_overlap));      
     if ~isempty(j_asgn)
@@ -68,6 +68,6 @@ det.auc = auc;
 
 %% Plots
 if (do_plot) || (nargout == 0)
-  bubo.show.detection(det);
+  bobo.show.detection(det);
 end
 

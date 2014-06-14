@@ -5,4 +5,4 @@ function [is] = isvalid(bb)
 %
 %--------------------------------------------------------------------------
 
-is = (size(bb,2) >= 4) && (bubo.bbox.isxywh(bb));
+is = (size(bb,2) >= 4) && (bobo.bbox.isxywh(bb));

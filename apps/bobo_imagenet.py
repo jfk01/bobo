@@ -17,5 +17,5 @@ csvfile = imagenet.export(outdir=args.imagenetdir)
 imstream = imagenet.stream(indir=args.imagenetdir, outdir=args.outdir)
 
 rdd = sc.textFile(csvfile).filter(lambda x: args.category in imstream[x].category)
-print "[bubo_imagenet]: There are %d images for category (%s=%s)" % (rdd.count(), args.category, imagenet.category(args.category))
+print "[bobo_imagenet]: There are %d images for category (%s=%s)" % (rdd.count(), args.category, imagenet.category(args.category))
 #rdd.foreach(lambda x: imstream[x].load())

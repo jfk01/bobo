@@ -1,5 +1,5 @@
 from viset.library import caltech101
-from bubo.image import ImageCategoryStream
+from bobo.image import ImageCategoryStream
 
 def main():
     for imcategory in ImageCategoryStream(caltech101.export(), cache=caltech101.cache()):

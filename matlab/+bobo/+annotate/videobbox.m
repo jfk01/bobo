@@ -7,7 +7,7 @@ function [bbox, is_occluded] = videobbox(indir, n_imskip, outfile)
 
 
 %% Input
-imlist = bubo.util.imlist(indir);
+imlist = bobo.util.imlist(indir);
 if nargin < 3
   outfile = 'annotation.mat';
 end
@@ -25,7 +25,7 @@ if exist(outfile, 'file')
   GUI.bbox = mat.bbox;  % initialize 
   GUI.is_occluded = mat.is_occluded;  % initialize 
 end
-gui_videobbox();  % ${BUBO}/matlab/gui
+gui_videobbox();  % ${BOBO}/matlab/gui
 
 
 %% Output
