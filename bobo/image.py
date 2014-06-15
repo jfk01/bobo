@@ -71,6 +71,9 @@ class Image():
         if self.load() is not None:
             imshow(self.image)
 
+    def filename(self):
+        return (self.cachedimage.filename())
+                    
 class ImageCategory():
     cachedimage = None
     image = None
@@ -147,6 +150,9 @@ class ImageCategory():
         """List suitable for export"""
         return [os.path.join(self.cache.root(), self.cachedimage.uri), self.category]
 
+    def filename(self):
+        return (self.cachedimage.filename())
+    
 class ImageCategoryStream(object):
     """A stream of labeled imagery"""
     _csvfile = None
