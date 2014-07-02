@@ -23,6 +23,7 @@ def search(tag, n_vids=19):
 
 
 def download(vidlist):
+    """Use youtube-dl to download videos from url"""
     pass
 
 def scrape(tag, n_videos):
