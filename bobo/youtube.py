@@ -5,15 +5,16 @@ import os
 import urllib2
 import re
 import random
+from bobo.util import tofilename, remkdir
 
-def search(tag, n_vids=19):
+def search(tag, n_pages=1):
     url = 'https://www.youtube.com/results?search_query=%s&page=%d'
     vidlist = []
-    for k in range(1, int(n_vids/20)+2):
+    for k in range(0, n_pages):
         user_agent = random.choice(common_user_agents)
         headers = {'User-Agent':user_agent}
                      
-        search_request = urllib2.Request(url % (tag.replace(' ','+'), k), None, headers)
+        search_request = urllib2.Request(url % (tag.replace(' ','+'), k+1), None, headers)
         search_results = urllib2.urlopen(search_request)
         search_data = search_results.read()
 
@@ -22,10 +23,12 @@ def search(tag, n_vids=19):
     return vidlist
 
 
-def download(vidlist):
+def download(vidlist, outfile):
     """Use youtube-dl to download videos from url"""
-    pass
+    for (k,v) in enumerate(vidlist):
+        print '[bobo.youtube.download]: exporting "%s" to "%s"' % (v, outfile % k)
+        os.system('youtube-dl "%s" -o %s' % (v, outfile % k))  # must be on path
 
-def scrape(tag, n_videos):
-    pass
+def scrape(tag, n_pages=1, outdir='.'):
+    download(search(tag, n_pages), os.path.join(remkdir(outdir), tofilename(tag)+'_%04d.mp4'))
 

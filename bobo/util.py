@@ -16,6 +16,12 @@ import bobo.viset
 global BOBO_VERBOSITY
 BOBO_VERBOSITY = 1
 
+def tofilename(s):
+    valid_chars = "-_.%s%s" % (string.ascii_letters, string.digits)
+    s = string.replace(s, ' ', '_');
+    s = string.replace(s, '-', '_');        
+    return "".join(x for x in s if x in valid_chars)
+
 
 def viset(visetname):
     """Dynamically import requested vision dataset module"""
@@ -255,7 +261,8 @@ def print_update(status):
 def remkdir(path):
     if os.path.isdir(path) is False:
         os.makedirs(path)
-    
+    return path
+
 def splitextension(filename):
     (head, tail) = os.path.split(filename)
     try:
