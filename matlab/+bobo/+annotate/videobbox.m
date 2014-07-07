@@ -33,3 +33,4 @@ bbox = GUI.bbox;  % [x y w h] format
 is_occluded = GUI.is_occluded;  % binary 
 save(outfile,'imlist','bbox','is_occluded');
 fprintf('[%s]: exporting to ''%s''\n', mfilename, outfile);
+

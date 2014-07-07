@@ -44,14 +44,37 @@ def liveleak(tag, n_pages=1, outdir=None):
     if outdir is not None:
         download(vidlist, os.path.join(remkdir(outdir), 'liveleak_'+tofilename(tag)+'_%04d.mp4')) 
     return(vidlist)
-    
+
+
+def ustream(tag, n_pages=1, outdir=None):
+    url = 'http://www.ustream.tv/search?q=%s'
+    vidlist = []
+    for k in range(0, 1):
+        user_agent = random.choice(common_user_agents)
+        headers = {'User-Agent':user_agent}
+                     
+        search_request = urllib2.Request(url % (tag.replace(' ','+')), None, headers)
+        search_results = urllib2.urlopen(search_request)
+        search_data = search_results.read()
+
+        datalist = search_data.split('href="/recorded/')
+        vidlist.extend(['http://www.ustream.tv/recorded/%s' % vid.split('"')[0] for vid in datalist if 'DOCTYPE' not in vid.split('"')[0]])
+    vidlist = list(set(vidlist))  # unique
+
+    print vidlist
+    if outdir is not None:
+        download(vidlist, os.path.join(remkdir(outdir), 'ustream_'+tofilename(tag)+'_%04d.mp4')) 
+    return(vidlist)
+        
 
 def download(vidlist, outfile):
     """Use youtube-dl to download videos from url"""
+    
     for (k,v) in enumerate(vidlist):
         try:
             print '[bobo.youtube.download]: exporting "%s" to "%s"' % (v, outfile % k)
             os.system('youtube-dl "%s" -o %s' % (v, outfile % k))  # must be on path
         except:
+            # http://rg3.github.io/youtube-dl/supportedsites.html
             print '[bobo.youtube.download]: download failed - skipping'
 
