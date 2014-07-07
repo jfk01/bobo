@@ -1,6 +1,7 @@
 import importlib
 
-BACKEND = importlib.import_module('bobo.gui.using_matplotlib')
+#BACKEND = importlib.import_module('bobo.gui.using_matplotlib')
+BACKEND = importlib.import_module('bobo.gui.using_opencv')
 
 def backend(using='pygame'):
     global BACKEND
