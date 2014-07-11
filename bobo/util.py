@@ -114,6 +114,9 @@ def matread(txtfile):
 def imlist(imdir):
     return [os.path.join(imdir,item) for item in os.listdir(imdir) if isimg(item)]
 
+def csvlist(imdir):
+    return [os.path.join(imdir,item) for item in os.listdir(imdir) if iscsv(item)]
+
 def txtlist(imdir):
     return [os.path.join(imdir,item) for item in os.listdir(imdir) if istextfile(item)]
 
@@ -138,6 +141,13 @@ def tolist(x):
 def isimg(path):
   (filename, ext) = os.path.splitext(path)
   if ext.lower() in ['.jpg','.jpeg','.png','.tif','.tiff','.pgm','.ppm','.gif']:
+    return True
+  else:
+    return False
+
+def iscsv(path):
+  (filename, ext) = os.path.splitext(path)
+  if ext.lower() in ['.csv','.CSV']:
     return True
   else:
     return False
