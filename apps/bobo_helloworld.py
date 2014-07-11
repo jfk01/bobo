@@ -10,7 +10,7 @@ if 'sc' not in locals():
     spark_conf.set('spark.cores.max','4')
     sc = SparkContext(conf=spark_conf,appName='Bobo HelloWorld!')
 
-NUM_SAMPLES = 1E6
+NUM_SAMPLES = int(1E6)
 count = sc.parallelize(xrange(0, NUM_SAMPLES)).map(sample).reduce(lambda a, b: a + b)
 print "[bobo_helloworld]:  Pi is roughly %f" % (4.0 * count / NUM_SAMPLES)
 

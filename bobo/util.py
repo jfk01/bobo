@@ -114,6 +114,13 @@ def matread(txtfile):
 def imlist(imdir):
     return [os.path.join(imdir,item) for item in os.listdir(imdir) if isimg(item)]
 
+def imsavelist(imdir, outfile):
+    filelist = [os.path.join(imdir,item) for item in os.listdir(imdir) if isimg(item)]
+    with open(outfile, 'w') as f:
+        for s in filelist:
+            f.write(s + '\n')
+    return(outfile)
+    
 def csvlist(imdir):
     return [os.path.join(imdir,item) for item in os.listdir(imdir) if iscsv(item)]
 
