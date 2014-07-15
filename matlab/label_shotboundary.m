@@ -7,7 +7,7 @@ function [] = label_shotboundary(indir, outdir)
 
 %% Defaults
 if ~exist('outdir','var') || isempty(outdir)
-  outdir = '.';
+  outdir = indir;
 end
 
 
@@ -31,6 +31,7 @@ if ~isfield(GUI.user, 'figure')
   shotCallback([],[],[]);
 end
 
+
 %%-------------------------------------------------------------------------
 function [] = shotCallback(hObject, eventdata, handles)
 global GUI;
@@ -38,13 +39,13 @@ GUI.user.data(GUI.currentframe) = get(GUI.user.button, 'Value');
 title(GUI.user.axes, 'Shot Boundary');
 xlabel('Frame');  ylabel('Is Shot Boundary?');
 bar(GUI.user.axes, GUI.user.data); grid on;
-%playCallback();
+
 
 %%-------------------------------------------------------------------------
 function [] = saveCallback(hObject, eventdata, handles)
 global GUI;
-shotboundary = GUI.user.data;
-fprintf('[label_shotboundary]: Saving "%s"\n', fullfile(GUI.user.outdir, 'shotboundary.mat'));
+shotboundary = (GUI.user.data);
+fprintf('[label_shotboundary]: Saving "%s" and "%s" \n', fullfile(GUI.user.outdir, 'shotboundary.mat'), fullfile(GUI.user.outdir, 'shotboundary.csv'));
 save(fullfile(GUI.user.outdir, 'shotboundary.mat'), 'shotboundary');
-
+csvwrite(fullfile(GUI.user.outdir, 'shotboundary.csv'), [find(shotboundary); ones(1,length(find(shotboundary)))]');
 
