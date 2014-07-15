@@ -1,4 +1,4 @@
-function [] = label_trackstart(indir, outdir, keyframes)
+function [] = label_trackstart(indir, outfile, keyframefile)
 %--------------------------------------------------------------------------
 %
 % Copyright (c) 2014 Jeffrey Byrne
@@ -6,13 +6,13 @@ function [] = label_trackstart(indir, outdir, keyframes)
 %--------------------------------------------------------------------------
 
 %% Defaults
-if ~exist('outdir','var') || isempty(outdir)
-  outdir = indir;
+if ~exist('outfile','var') || isempty(outfile)
+  outfile = './tracks.csv';
 end
 
 
 %% Figure
-figure(1000); clf;
+h = figure(1000); clf;
 typePopupmenu = uicontrol('Style','popupmenu','String',{'person','vehicle','weapon'}, 'Position',[10 10 100 20], 'Callback', @typeCallback);
 newButton = uicontrol('Style','pushbutton','String','New', 'Position',[110 10 50 20], 'Callback', @newCallback);
 prevButton = uicontrol('Style','pushbutton','String','<]', 'Position',[170 10 20 20], 'Callback', @prevCallback);
@@ -21,10 +21,10 @@ saveButton = uicontrol('Style','pushbutton','String','Save', 'Position',[210 10 
 
 
 %% Parameters
-mat = load(fullfile(indir, 'shotboundary.mat'));
 global GUI;
+mat = load(keyframefile);
 GUI.keyframes = find(mat.shotboundary);
-GUI.outdir = outdir;
+GUI.outfile = outfile;
 GUI.indir = indir;
 GUI.imlist = bobo.util.imlist(indir);
 GUI.currentframe = 1;
@@ -78,8 +78,8 @@ GUI.label = labels{GUI.labelindex};
 function [] = saveCallback(hObject, eventdata, handles)
 global GUI;
 cache(); show(); fetch();
-fprintf('[label_trackstart]: saving "%s"\n', fullfile(GUI.outdir, 'tracks.csv'));
-f = fopen(fullfile(GUI.outdir, 'tracks.csv'), 'w');
+fprintf('[label_trackstart]: saving "%s"\n', GUI.outfile);
+f = fopen(GUI.outfile, 'w');
 for k=1:length(GUI.tracklist)
   t = GUI.tracklist{k};
   for j=1:length(t)    

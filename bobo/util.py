@@ -112,7 +112,7 @@ def matread(txtfile):
     return np.mat(M)
         
 def imlist(imdir):
-    return [os.path.join(imdir,item) for item in os.listdir(imdir) if isimg(item)]
+    return [os.path.abspath(os.path.join(imdir,item)) for item in os.listdir(imdir) if isimg(item)]
 
 def writelist(mylist, outfile):
     with open(outfile, 'w') as f:

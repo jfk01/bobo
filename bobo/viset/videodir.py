@@ -6,7 +6,7 @@ from bobo.util import remkdir, isexe, isvideo, isimg, imsavelist, imlist
 import shutil
 
 def videolist(viddir=None):
-    return [os.path.join(viddir, filename) for filename in os.listdir(viddir) if isvideo(filename)]
+    return [os.path.join(viddir, filename) for filename in os.listdir(viddir) if (isvideo(filename) and (filename[0] != '.'))]
 
 def frames(viddir):
     for v in videolist(viddir):
@@ -32,7 +32,7 @@ def framelist(viddir):
     return fulllist
 
 def framedirlist(viddir):
-    return [os.path.join(viddir, filename) for filename in os.listdir(viddir) if os.path.isdir(os.path.join(viddir, filename))]
+    return [os.path.join(viddir, filename) for filename in os.listdir(viddir) if (os.path.isdir(os.path.join(viddir, filename)) and (filename[0] != '.'))]
 
         
                     
