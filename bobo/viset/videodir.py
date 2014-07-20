@@ -11,7 +11,7 @@ def videolist(viddir=None):
 def frames(viddir):
     for v in videolist(viddir):
         (outdir, ext) = os.path.splitext(v)
-        cmd = 'ffmpeg  -r 25 -i \'%s\' -vf "scale=-1:240" %s/%%08d.jpg &> /dev/null' % (v, remkdir(outdir))        
+        cmd = 'ffmpeg  -r 25 -i \'%s\' -qscale:v 2 -vf "scale=-1:240" %s/%%08d.jpg &> /dev/null' % (v, remkdir(outdir))        
         print '[bobo.viset.videodir]: exporting frames from "%s" to "%s"' % (v, outdir)
         os.system(cmd)
 

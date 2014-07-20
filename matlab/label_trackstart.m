@@ -20,10 +20,22 @@ nextButton = uicontrol('Style','pushbutton','String','[>', 'Position',[190 10 20
 saveButton = uicontrol('Style','pushbutton','String','Save', 'Position',[210 10 50 20], 'Callback', @saveCallback);
 
 
+%% Keyframes
+if bobo.util.ismat(keyframefile)
+  mat = load(keyframefile);
+  keyframes = find(mat.shotboundary);
+elseif bobo.util.iscsv(keyframefile)
+  mat = csvread(keyframefile);
+  keyframes = mat(:,1);
+else
+  error('invalid keyframe file "%s"', keyframefile);
+end
+keyframes = [1; keyframes(1:end-1)];  % beginning of shot
+
+
 %% Parameters
 global GUI;
-mat = load(keyframefile);
-GUI.keyframes = find(mat.shotboundary);
+GUI.keyframes = keyframes;
 GUI.outfile = outfile;
 GUI.indir = indir;
 GUI.imlist = bobo.util.imlist(indir);
